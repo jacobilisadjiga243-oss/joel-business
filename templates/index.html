@@ -3,7 +3,7 @@
 
 {% block content %}
 <section class="bandeau-livraison">
-    Livraison a domicile partout a Kinshasa | Commandez sur WhatsApp
+    Livraison a domicile partout a Gbadolite et Mobayi-Mbongo | Commandez sur WhatsApp
 </section>
 
 <section class="hero">
@@ -28,7 +28,7 @@
         <div class="produit-card">
             <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}">
             <h3>{{ p.nom }}</h3>
-            <p class="prix">{{ p.prix }} $</p>
+            <p class="prix">{{ p.prix }} {{ p.devise }}</p>
             <a href="/produit/{{ p.id }}" class="btn-secondary">Voir detail</a>
         </div>
         {% endfor %}
