@@ -66,8 +66,9 @@ class CodePromo(db.Model):
 
 def image_url(image):
     if not image: return ""
-    if image.startswith("http"): return image
-    return "/static/images/" + image
+    if image.startswith("http"): 
+        return image.strip()
+    return "/static/images/" + image.strip()
 
 def login_required(f):
     @wraps(f)
@@ -299,3 +300,4 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
