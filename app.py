@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
+﻿from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from config import Config
 from functools import wraps
@@ -23,7 +23,6 @@ class Produit(db.Model):
     image = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
 
-# NOUVEAU : Table pour stocker les infos de livraison
 class Parametre(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ville = db.Column(db.String(100), default="Gbadolite / Mobayi-Mbongo")
@@ -72,10 +71,9 @@ def panier():
 
 @app.route("/contact")
 def contact():
-    # On recupere les infos depuis la base de donnees
     info = Parametre.query.first()
     if not info:
-        info = Parametre() # Valeurs par defaut si la base est vide
+        info = Parametre()
     return render_template("contact.html", whatsapp_number=WHATSAPP_NUMBER, info=info)
 
 # --- ROUTES ADMIN ---
@@ -185,7 +183,6 @@ def admin_supprimer(id):
     flash("Produit supprime.", "success")
     return redirect(url_for("admin_dashboard"))
 
-# NOUVEAU : Route pour modifier les infos de livraison
 @app.route("/admin/infos", methods=["POST"])
 @login_required
 def admin_infos():
@@ -205,7 +202,11 @@ def admin_infos():
     flash("Informations de livraison mises a jour !", "success")
     return redirect(url_for("admin_dashboard"))
 
-if not os.path.exists(app.config["UPLOAD_FOLDER"]):`n    os.makedirs(app.config["UPLOAD_FOLDER"])`n`nwith app.app_context():
+# --- CREATION DES DOSSIERS ET DE LA BASE ---
+if not os.path.exists(app.config["UPLOAD_FOLDER"]):
+    os.makedirs(app.config["UPLOAD_FOLDER"])
+
+with app.app_context():
     db.create_all()
 
 if __name__ == "__main__":
