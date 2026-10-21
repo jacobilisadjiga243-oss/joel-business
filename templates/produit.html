@@ -1,0 +1,19 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ produit.nom }} - Joel Business{% endblock %}
+
+{% block content %}
+<section class="produit-detail">
+    <div class="detail-img">
+        <img src="{{ image_url(produit.image) }}" alt="{{ produit.nom }}">
+    </div>
+    <div class="detail-info">
+        <h1>{{ produit.nom }}</h1>
+        <p class="prix-grand">{{ produit.prix }} $</p>
+        <p>{{ produit.description }}</p>
+        <p class="categorie-tag">Categorie : {{ produit.categorie }}</p>
+        <button class="btn-primary" onclick="ajouterAuPanier({{ produit.id }}, '{{ produit.nom }}', {{ produit.prix }}, '{{ image_url(produit.image) }}')">
+            Ajouter au panier
+        </button>
+    </div>
+</section>
+{% endblock %}

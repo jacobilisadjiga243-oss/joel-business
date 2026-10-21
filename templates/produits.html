@@ -1,0 +1,20 @@
+﻿{% extends "base.html" %}
+{% block title %}Boutique - Joel Business{% endblock %}
+
+{% block content %}
+<section class="produits-section">
+    <h2>Catalogue - {{ categorie|capitalize }}</h2>
+    <div class="produits-grid">
+        {% for p in produits %}
+        <div class="produit-card">
+            <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}">
+            <h3>{{ p.nom }}</h3>
+            <p class="prix">{{ p.prix }} $</p>
+            <a href="/produit/{{ p.id }}" class="btn-secondary">Voir detail</a>
+        </div>
+        {% else %}
+        <p>Aucun produit dans cette categorie.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

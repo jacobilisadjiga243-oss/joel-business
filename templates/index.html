@@ -1,0 +1,36 @@
+﻿{% extends "base.html" %}
+{% block title %}Accueil - Joel Business{% endblock %}
+
+{% block content %}
+<section class="bandeau-livraison">
+    Livraison a domicile partout a Kinshasa | Commandez sur WhatsApp
+</section>
+
+<section class="hero">
+    <div class="hero-text">
+        <h1>La Mode a Portee de Clic</h1>
+        <p>Robes, pantalons, chemises et valises de qualite.</p>
+        <a href="/produits" class="btn-primary">Voir la boutique</a>
+    </div>
+</section>
+
+<section class="categories">
+    <a href="/produits?categorie=femme" class="cat-card">Femme</a>
+    <a href="/produits?categorie=homme" class="cat-card">Homme</a>
+    <a href="/produits?categorie=valise" class="cat-card">Valises</a>
+</section>
+
+<section class="produits-section">
+    <h2>Nos nouveautes</h2>
+    <div class="produits-grid">
+        {% for p in produits[:6] %}
+        <div class="produit-card">
+            <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}">
+            <h3>{{ p.nom }}</h3>
+            <p class="prix">{{ p.prix }} $</p>
+            <a href="/produit/{{ p.id }}" class="btn-secondary">Voir detail</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
