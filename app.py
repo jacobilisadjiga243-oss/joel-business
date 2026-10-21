@@ -43,6 +43,15 @@ class Transaction(db.Model):
     statut = db.Column(db.String(20), default="En attente")
     date = db.Column(db.DateTime, default=db.func.now())
 
+# NOUVEAU : Table pour les avis clients
+class Avis(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(100), nullable=False)
+    note = db.Column(db.Integer, nullable=False, default=5)
+    commentaire = db.Column(db.Text, nullable=False)
+    date = db.Column(db.DateTime, default=db.func.now())
+    approuve = db.Column(db.Boolean, default=False) # False = En attente, True = Approuve
+
 def image_url(image):
     if not image: return ""
     if image.startswith("http"): return image
@@ -56,21 +65,48 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# --- ROUTES PUBLIQUES ---
 @app.route("/")
 def index():
-    produits = Produit.query.all()
+    tous_produits = Produit.query.order_by(Produit.id.desc()).all()
+    top_ventes = tous_produits[:4]
+    nouveautes = tous_produits[4:8]
+    
+    # On ne recupere que les avis approuves par l'admin
+    avis_clients = Avis.query.filter_by(approuve=True).order_by(Avis.date.desc()).limit(3).all()
+    
     info = Parametre.query.first()
     if not info: info = Parametre()
-    return render_template("index.html", produits=produits, image_url=image_url, info=info)
+    return render_template("index.html", top_ventes=top_ventes, nouveautes=nouveautes, avis_clients=avis_clients, image_url=image_url, info=info)
+
+# NOUVEAU : Route pour ajouter un avis
+@app.route("/ajouter-avis", methods=["POST"])
+def ajouter_avis():
+    nom = request.form.get("nom")
+    note = int(request.form.get("note", 5))
+    commentaire = request.form.get("commentaire")
+    
+    if nom and commentaire:
+        nouvel_avis = Avis(nom=nom, note=note, commentaire=commentaire, approuve=False)
+        db.session.add(nouvel_avis)
+        db.session.commit()
+        flash("Merci ! Votre avis a bien ete envoye et sera publie apres validation.", "success")
+    else:
+        flash("Erreur : Veuillez remplir tous les champs.", "error")
+        
+    return redirect(url_for("index") + "#avis")
 
 @app.route("/produits")
 def produits_page():
     categorie = request.args.get("categorie", "tous")
-    if categorie == "tous":
+    recherche = request.args.get("q", "")
+    if recherche:
+        liste = Produit.query.filter(Produit.nom.ilike(f'%{recherche}%')).all()
+    elif categorie == "tous":
         liste = Produit.query.all()
     else:
         liste = Produit.query.filter_by(categorie=categorie).all()
-    return render_template("produits.html", produits=liste, categorie=categorie, image_url=image_url)
+    return render_template("produits.html", produits=liste, categorie=categorie, recherche=recherche, image_url=image_url)
 
 @app.route("/produit/<int:id>")
 def produit_detail(id):
@@ -87,6 +123,7 @@ def contact():
     if not info: info = Parametre()
     return render_template("contact.html", whatsapp_number=WHATSAPP_NUMBER, info=info)
 
+# --- ROUTES ADMIN ---
 @app.route("/admin", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
@@ -112,7 +149,31 @@ def admin_dashboard():
         info = Parametre()
         db.session.add(info)
         db.session.commit()
-    return render_template("admin_dashboard.html", produits=produits, image_url=image_url, edit=None, info=info)
+    
+    # NOUVEAU : On recupere les avis en attente pour l'admin
+    avis_en_attente = Avis.query.filter_by(approuve=False).order_by(Avis.date.desc()).all()
+    avis_approuves = Avis.query.filter_by(approuve=True).order_by(Avis.date.desc()).all()
+    
+    return render_template("admin_dashboard.html", produits=produits, image_url=image_url, edit=None, info=info, avis_en_attente=avis_en_attente, avis_approuves=avis_approuves)
+
+# NOUVEAU : Routes pour modérer les avis
+@app.route("/admin/avis/approuver/<int:id>")
+@login_required
+def admin_avis_approuver(id):
+    avis = Avis.query.get_or_404(id)
+    avis.approuve = True
+    db.session.commit()
+    flash("Avis approuve et publie !", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/avis/supprimer/<int:id>")
+@login_required
+def admin_avis_supprimer(id):
+    avis = Avis.query.get_or_404(id)
+    db.session.delete(avis)
+    db.session.commit()
+    flash("Avis supprime.", "success")
+    return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/transactions")
 @login_required
@@ -177,8 +238,11 @@ def admin_modifier(id):
         db.session.commit()
         flash("Produit modifie !", "success")
         return redirect(url_for("admin_dashboard"))
+    
     info = Parametre.query.first()
-    return render_template("admin_dashboard.html", produits=Produit.query.all(), image_url=image_url, edit=produit, info=info)
+    avis_en_attente = Avis.query.filter_by(approuve=False).all()
+    avis_approuves = Avis.query.filter_by(approuve=True).all()
+    return render_template("admin_dashboard.html", produits=Produit.query.all(), image_url=image_url, edit=produit, info=info, avis_en_attente=avis_en_attente, avis_approuves=avis_approuves)
 
 @app.route("/admin/supprimer/<int:id>")
 @login_required

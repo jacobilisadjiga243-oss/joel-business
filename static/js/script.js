@@ -73,7 +73,7 @@ function afficherPanier() {
         '</div>';
     });
     listeDiv.innerHTML = html;
-    totalDiv.innerHTML = '<h2>Voir WhatsApp pour le total</h2>'; // Le total mélangé n'a plus de sens
+    totalDiv.innerHTML = '<h2>Voir WhatsApp pour le total</h2>';
 }
 
 function commanderWhatsApp() {

@@ -3,34 +3,34 @@
 
 {% block content %}
 {% if info.promo_active %}
-<div class="bandeau-promo">
-    🔥 {{ info.promo_texte }}
-</div>
+<div class="bandeau-promo">🔥 {{ info.promo_texte }}</div>
 {% endif %}
 
 <section class="bandeau-livraison">
     Livraison a domicile partout a Gbadolite et Mobayi-Mbongo | Commandez sur WhatsApp
 </section>
 
-<section class="hero">
+<section class="hero" style="background: linear-gradient(135deg, #111, #e91e63); padding: 100px 20px;">
     <div class="hero-text">
-        <h1>La Mode et bien plus encore</h1>
-        <p>Habits, valises, chaussures, sacs et bien d'autres articles.</p>
-        <a href="/produits" class="btn-primary">Voir toute la boutique</a>
+        <h1 style="font-size: 3.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">La Mode et bien plus encore</h1>
+        <p style="font-size: 1.3rem; margin-bottom: 30px;">Habits, valises, chaussures, sacs et bien d'autres articles.</p>
+        <a href="/produits" class="btn-primary" style="background: white; color: #e91e63; font-size: 1.2rem; padding: 15px 40px;">Voir toute la boutique</a>
     </div>
 </section>
 
 <section class="categories">
-    <a href="/produits?categorie=femme" class="cat-card">Femme</a>
-    <a href="/produits?categorie=homme" class="cat-card">Homme</a>
-    <a href="/produits?categorie=valise" class="cat-card">Valises</a>
-    <a href="/produits?categorie=autres" class="cat-card">Autres</a>
+    <a href="/produits?categorie=femme" class="cat-card" style="padding: 40px; font-size: 1.5rem;">Femme</a>
+    <a href="/produits?categorie=homme" class="cat-card" style="padding: 40px; font-size: 1.5rem;">Homme</a>
+    <a href="/produits?categorie=valise" class="cat-card" style="padding: 40px; font-size: 1.5rem;">Valises</a>
+    <a href="/produits?categorie=autres" class="cat-card" style="padding: 40px; font-size: 1.5rem;">Autres</a>
 </section>
 
+<!-- TOP VENTES -->
+{% if top_ventes %}
 <section class="produits-section">
-    <h2>Nos nouveautes</h2>
+    <h2 style="text-align: left; border-left: 5px solid #e91e63; padding-left: 15px;">🔥 Nos Top Ventes</h2>
     <div class="produits-grid">
-        {% for p in produits[:8] %}
+        {% for p in top_ventes %}
         <div class="produit-card">
             <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}">
             <h3>{{ p.nom }}</h3>
@@ -38,6 +38,70 @@
             <a href="/produit/{{ p.id }}" class="btn-secondary">Voir detail</a>
         </div>
         {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- NOUVEAUTES -->
+{% if nouveautes %}
+<section class="produits-section">
+    <h2 style="text-align: left; border-left: 5px solid #1976d2; padding-left: 15px;">✨ Nouveautes</h2>
+    <div class="produits-grid">
+        {% for p in nouveautes %}
+        <div class="produit-card">
+            <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}">
+            <h3>{{ p.nom }}</h3>
+            <p class="prix">{{ p.prix }} {{ p.devise }}</p>
+            <a href="/produit/{{ p.id }}" class="btn-secondary">Voir detail</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- AVIS CLIENTS DYNAMIQUES -->
+<section id="avis" class="produits-section" style="background: #fff; border-radius: 20px; margin-bottom: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+    <h2 style="text-align:center; margin-bottom: 30px;">⭐ Ce que disent nos clients</h2>
+    
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}<p style="color: green; font-weight: bold; margin-bottom: 20px; background: #e8f5e9; padding: 10px; border-radius: 8px; text-align:center;">{{ messages[0] }}</p>{% endif %}
+    {% endwith %}
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        {% if avis_clients %}
+            {% for a in avis_clients %}
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 12px; text-align: center;">
+                <p style="color: #ffc107; font-size: 1.5rem;">{% for i in range(a.note) %}⭐{% endfor %}</p>
+                <p style="font-style: italic; color: #555; margin: 10px 0;">"{{ a.commentaire }}"</p>
+                <p style="font-weight: bold; color: #111;">- {{ a.nom }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align:center; color:#999; grid-column: 1 / -1;">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>
+        {% endif %}
+    </div>
+
+    <!-- Formulaire pour laisser un avis -->
+    <div style="max-width: 500px; margin: 0 auto; background: #f0f8ff; padding: 20px; border-radius: 12px;">
+        <h3 style="text-align: center; margin-bottom: 15px; color: #1976d2;">Laissez votre avis</h3>
+        <form method="POST" action="/ajouter-avis">
+            <label style="font-weight: 500; font-size: 0.9rem;">Votre nom</label>
+            <input type="text" name="nom" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px;">
+            
+            <label style="font-weight: 500; font-size: 0.9rem;">Note (sur 5)</label>
+            <select name="note" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                <option value="4">⭐⭐⭐⭐ (Tres bien)</option>
+                <option value="3">⭐⭐⭐ (Bien)</option>
+                <option value="2">⭐⭐ (Moyen)</option>
+                <option value="1">⭐ (Mauvais)</option>
+            </select>
+            
+            <label style="font-weight: 500; font-size: 0.9rem;">Votre commentaire</label>
+            <textarea name="commentaire" rows="3" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
+            
+            <button type="submit" class="btn-primary" style="width: 100%;">Envoyer mon avis</button>
+        </form>
     </div>
 </section>
 {% endblock %}

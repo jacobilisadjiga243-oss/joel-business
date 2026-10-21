@@ -15,6 +15,42 @@
       {% if messages %}<p style="color: green; font-weight: bold; margin-bottom: 15px; background: #e8f5e9; padding: 10px; border-radius: 8px;">{{ messages[0] }}</p>{% endif %}
     {% endwith %}
 
+    
+    <!-- NOUVEAU : Gestion des Avis -->
+    <div class="contact-form-box" style="margin-bottom: 30px; background: #fff3e0; border: 1px solid #ffb74d;">
+        <h3 style="margin-bottom: 15px; color: #e65100;">⭐ Moderation des avis clients</h3>
+        
+        {% if avis_en_attente %}
+            <p style="margin-bottom: 10px; font-weight: bold;">Avis en attente de validation :</p>
+            {% for a in avis_en_attente %}
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <p style="font-weight: bold;">{{ a.nom }} ({{ a.note }} etoiles)</p>
+                    <p style="font-size: 0.9rem; color: #555;">"{{ a.commentaire }}"</p>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <a href="/admin/avis/approuver/{{ a.id }}" class="btn-secondary" style="background: #25D366;">Approuver</a>
+                    <a href="/admin/avis/supprimer/{{ a.id }}" class="btn-secondary" style="background: #d32f2f;" onclick="return confirm('Supprimer ?')">Supprimer</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: #666; font-size: 0.9rem;">Aucun nouvel avis en attente.</p>
+        {% endif %}
+
+        {% if avis_approuves %}
+            <p style="margin-top: 20px; margin-bottom: 10px; font-weight: bold;">Avis publies :</p>
+            {% for a in avis_approuves %}
+            <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <p style="font-weight: bold;">{{ a.nom }}</p>
+                    <p style="font-size: 0.8rem; color: #555;">"{{ a.commentaire }}"</p>
+                </div>
+                <a href="/admin/avis/supprimer/{{ a.id }}" class="btn-secondary" style="background: #d32f2f;" onclick="return confirm('Supprimer ?')">Supprimer</a>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
     <div class="contact-form-box" style="margin-bottom: 30px; background: #f0f8ff;">
         <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison et promo</h3>
         <form method="POST" action="/admin/infos">
@@ -74,3 +110,4 @@
     </div>
 </section>
 {% endblock %}
+
