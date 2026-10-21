@@ -4,6 +4,7 @@ from config import Config
 from functools import wraps
 import os
 from werkzeug.utils import secure_filename
+import time
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -21,6 +22,7 @@ class Produit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
     prix = db.Column(db.Integer, nullable=False)
+    devise = db.Column(db.String(10), nullable=False, default="$") # NOUVEAU
     categorie = db.Column(db.String(50), nullable=False)
     image = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
@@ -94,31 +96,29 @@ def admin_dashboard():
 def admin_ajouter():
     nom = request.form.get("nom")
     prix = request.form.get("prix")
+    devise = request.form.get("devise")
     categorie = request.form.get("categorie")
     description = request.form.get("description")
     
-    # Gestion de l'image (Upload)
     image_file = request.files.get("image_file")
     image_url_input = request.form.get("image_url")
     
     nom_image = ""
     if image_file and image_file.filename != "":
-        filename = secure_filename(image_file.filename)
-        # Ajout d'un prefixe unique pour eviter les doublons
-        import time
-        filename = str(int(time.time())) + "_" + filename
+        # On force l'extension en .jpg pour eviter les problemes de format
+        filename = "img_" + str(int(time.time())) + ".jpg"
         image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         nom_image = filename
     elif image_url_input:
         nom_image = image_url_input
 
     if nom and prix and categorie and nom_image:
-        nouveau = Produit(nom=nom, prix=int(prix), categorie=categorie, image=nom_image, description=description)
+        nouveau = Produit(nom=nom, prix=int(prix), devise=devise, categorie=categorie.lower(), image=nom_image, description=description)
         db.session.add(nouveau)
         db.session.commit()
         flash("Produit ajoute avec succes !", "success")
     else:
-        flash("Erreur : Veuillez remplir tous les champs obligatoires.", "error")
+        flash("Erreur : Veuillez remplir tous les champs.", "error")
         
     return redirect(url_for("admin_dashboard"))
 
@@ -129,17 +129,15 @@ def admin_modifier(id):
     if request.method == "POST":
         produit.nom = request.form.get("nom")
         produit.prix = int(request.form.get("prix"))
-        produit.categorie = request.form.get("categorie")
+        produit.devise = request.form.get("devise")
+        produit.categorie = request.form.get("categorie").lower()
         produit.description = request.form.get("description")
         
-        # Nouvelle image si fournie
         image_file = request.files.get("image_file")
         image_url_input = request.form.get("image_url")
         
         if image_file and image_file.filename != "":
-            filename = secure_filename(image_file.filename)
-            import time
-            filename = str(int(time.time())) + "_" + filename
+            filename = "img_" + str(int(time.time())) + ".jpg"
             image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             produit.image = filename
         elif image_url_input:
@@ -160,11 +158,14 @@ def admin_supprimer(id):
     flash("Produit supprime.", "success")
     return redirect(url_for("admin_dashboard"))
 
+# --- INITIALISATION ---
 with app.app_context():
+    db.drop_all() # ⚠️ On supprime l'ancienne base pour ajouter la devise
     db.create_all()
     if Produit.query.count() == 0:
-        p1 = Produit(nom="Robe Elegante Noire", prix=35, categorie="femme", image="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop", description="Robe de soiree chic.")
-        db.session.add(p1)
+        p1 = Produit(nom="Robe Elegante Noire", prix=35, devise="$", categorie="femme", image="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop", description="Robe de soiree chic.")
+        p2 = Produit(nom="Chemise Homme Bleue", prix=25000, devise="FC", categorie="homme", image="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400&h=500&fit=crop", description="Chemise coton.")
+        db.session.add_all([p1, p2])
         db.session.commit()
 
 if __name__ == "__main__":

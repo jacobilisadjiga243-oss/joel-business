@@ -14,48 +14,54 @@
       {% endif %}
     {% endwith %}
 
-    <!-- Formulaire d'ajout / modification -->
     <div class="contact-form-box" style="margin-bottom: 30px;">
         <h3 style="margin-bottom: 15px;">{% if edit %}Modifier le produit{% else %}Ajouter un produit{% endif %}</h3>
         <form method="POST" action="{% if edit %}/admin/modifier/{{ edit.id }}{% else %}/admin/ajouter{% endif %}" enctype="multipart/form-data">
             <label>Nom du produit</label>
             <input type="text" name="nom" value="{{ edit.nom if edit else '' }}" required>
             
-            <label>Prix ($)</label>
-            <input type="number" name="prix" value="{{ edit.prix if edit else '' }}" required>
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1;">
+                    <label>Prix</label>
+                    <input type="number" name="prix" value="{{ edit.prix if edit else '' }}" required style="width:100%;">
+                </div>
+                <div style="flex:1;">
+                    <label>Devise</label>
+                    <select name="devise" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;">
+                        <option value="$" {% if edit and edit.devise == '$' %}selected{% endif %}>Dollar ($)</option>
+                        <option value="FC" {% if edit and edit.devise == 'FC' %}selected{% endif %}>Franc Congolais (FC)</option>
+                    </select>
+                </div>
+            </div>
             
             <label>Categorie</label>
-            <select name="categorie" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:10px;">
-                <option value="femme" {% if edit and edit.categorie == 'femme' %}selected{% endif %}>Femme</option>
-                <option value="homme" {% if edit and edit.categorie == 'homme' %}selected{% endif %}>Homme</option>
-                <option value="valise" {% if edit and edit.categorie == 'valise' %}selected{% endif %}>Valise</option>
-            </select>
+            <input type="text" name="categorie" list="categories-list" value="{{ edit.categorie if edit else '' }}" placeholder="Ex: Chaussures, Sacs..." required>
+            <datalist id="categories-list">
+                <option value="femme"><option value="homme"><option value="valise"><option value="autres">
+            </datalist>
             
             <label>Photo (depuis le telephone/PC)</label>
             <input type="file" name="image_file" accept="image/*" style="margin-bottom: 10px;">
-            <small style="display:block; margin-bottom: 10px; color: #666;">Ou coller un lien internet :</small>
-            <input type="text" name="image_url" value="{{ edit.image if edit and edit.image.startswith('http') else '' }}" placeholder="https://...">
+            <input type="text" name="image_url" value="{{ edit.image if edit and edit.image.startswith('http') else '' }}" placeholder="Ou coller un lien https://...">
             
             <label>Description</label>
             <textarea name="description" rows="2">{{ edit.description if edit else '' }}</textarea>
             
-            <button type="submit" class="btn-whatsapp">{% if edit %}Enregistrer les modifications{% else %}Ajouter au catalogue{% endif %}</button>
-            {% if edit %}
-                <a href="/admin/dashboard" class="btn-secondary" style="display:block; text-align:center; margin-top:10px;">Annuler</a>
-            {% endif %}
+            <button type="submit" class="btn-whatsapp" style="margin-top:15px;">{% if edit %}Enregistrer{% else %}Ajouter au catalogue{% endif %}</button>
+            {% if edit %}<a href="/admin/dashboard" class="btn-secondary" style="display:block; text-align:center; margin-top:10px;">Annuler</a>{% endif %}
         </form>
     </div>
 
-    <!-- Liste des produits existants -->
     <h3>Produits en ligne</h3>
     <div class="produits-grid" style="margin-top: 15px;">
         {% for p in produits %}
         <div class="produit-card" style="padding-bottom: 10px;">
             <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}" style="height: 150px;">
-            <h3 style="font-size: 1rem;">{{ p.nom }} ({{ p.prix }} $)</h3>
+            <h3 style="font-size: 1rem;">{{ p.nom }} ({{ p.prix }} {{ p.devise }})</h3>
+            <p style="font-size: 0.8rem; color: #666;">Cat: {{ p.categorie }}</p>
             <div style="display:flex; gap:5px; justify-content:center; margin-top:5px;">
                 <a href="/admin/modifier/{{ p.id }}" class="btn-secondary" style="background: #1976d2;">Modifier</a>
-                <a href="/admin/supprimer/{{ p.id }}" class="btn-secondary" style="background: #d32f2f;" onclick="return confirm('Supprimer ce produit ?')">Supprimer</a>
+                <a href="/admin/supprimer/{{ p.id }}" class="btn-secondary" style="background: #d32f2f;" onclick="return confirm('Supprimer ?')">Suppr</a>
             </div>
         </div>
         {% endfor %}
