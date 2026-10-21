@@ -8,30 +8,41 @@
         <a href="/admin/logout" class="btn-secondary" style="background: #d32f2f;">Deconnexion</a>
     </div>
 
-    <!-- Formulaire d'ajout -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <p style="color: green; font-weight: bold; margin-bottom: 15px;">{{ messages[0] }}</p>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Formulaire d'ajout / modification -->
     <div class="contact-form-box" style="margin-bottom: 30px;">
-        <h3 style="margin-bottom: 15px;">Ajouter un produit</h3>
-        <form method="POST" action="/admin/ajouter">
+        <h3 style="margin-bottom: 15px;">{% if edit %}Modifier le produit{% else %}Ajouter un produit{% endif %}</h3>
+        <form method="POST" action="{% if edit %}/admin/modifier/{{ edit.id }}{% else %}/admin/ajouter{% endif %}" enctype="multipart/form-data">
             <label>Nom du produit</label>
-            <input type="text" name="nom" required>
+            <input type="text" name="nom" value="{{ edit.nom if edit else '' }}" required>
             
             <label>Prix ($)</label>
-            <input type="number" name="prix" required>
+            <input type="number" name="prix" value="{{ edit.prix if edit else '' }}" required>
             
             <label>Categorie</label>
             <select name="categorie" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:10px;">
-                <option value="femme">Femme</option>
-                <option value="homme">Homme</option>
-                <option value="valise">Valise</option>
+                <option value="femme" {% if edit and edit.categorie == 'femme' %}selected{% endif %}>Femme</option>
+                <option value="homme" {% if edit and edit.categorie == 'homme' %}selected{% endif %}>Homme</option>
+                <option value="valise" {% if edit and edit.categorie == 'valise' %}selected{% endif %}>Valise</option>
             </select>
             
-            <label>Lien de l'image (URL de la photo)</label>
-            <input type="text" name="image" placeholder="https://..." required>
+            <label>Photo (depuis le telephone/PC)</label>
+            <input type="file" name="image_file" accept="image/*" style="margin-bottom: 10px;">
+            <small style="display:block; margin-bottom: 10px; color: #666;">Ou coller un lien internet :</small>
+            <input type="text" name="image_url" value="{{ edit.image if edit and edit.image.startswith('http') else '' }}" placeholder="https://...">
             
             <label>Description</label>
-            <textarea name="description" rows="2"></textarea>
+            <textarea name="description" rows="2">{{ edit.description if edit else '' }}</textarea>
             
-            <button type="submit" class="btn-whatsapp">Ajouter au catalogue</button>
+            <button type="submit" class="btn-whatsapp">{% if edit %}Enregistrer les modifications{% else %}Ajouter au catalogue{% endif %}</button>
+            {% if edit %}
+                <a href="/admin/dashboard" class="btn-secondary" style="display:block; text-align:center; margin-top:10px;">Annuler</a>
+            {% endif %}
         </form>
     </div>
 
@@ -42,7 +53,10 @@
         <div class="produit-card" style="padding-bottom: 10px;">
             <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}" style="height: 150px;">
             <h3 style="font-size: 1rem;">{{ p.nom }} ({{ p.prix }} $)</h3>
-            <a href="/admin/supprimer/{{ p.id }}" class="btn-secondary" style="background: #d32f2f; margin-top: 5px;" onclick="return confirm('Supprimer ce produit ?')">Supprimer</a>
+            <div style="display:flex; gap:5px; justify-content:center; margin-top:5px;">
+                <a href="/admin/modifier/{{ p.id }}" class="btn-secondary" style="background: #1976d2;">Modifier</a>
+                <a href="/admin/supprimer/{{ p.id }}" class="btn-secondary" style="background: #d32f2f;" onclick="return confirm('Supprimer ce produit ?')">Supprimer</a>
+            </div>
         </div>
         {% endfor %}
     </div>

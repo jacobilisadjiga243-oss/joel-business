@@ -2,20 +2,21 @@
 from flask_sqlalchemy import SQLAlchemy
 from config import Config
 from functools import wraps
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 
 WHATSAPP_NUMBER = "243992519112"
-ADMIN_PASSWORD = "joel2026" # ⚠️ Mot de passe pour l'admin
+ADMIN_PASSWORD = "joel2026"
 
 INFO_LIVRAISON = {
     "ville": "Kinshasa", "quartier": "A preciser", "frais": "A confirmer selon la zone",
     "delai": "24 a 48h", "heure_debut": "08:00", "heure_fin": "20:00",
 }
 
-# --- MODELES (BASE DE DONNEES) ---
 class Produit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
@@ -24,7 +25,6 @@ class Produit(db.Model):
     image = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
 
-# --- FONCTIONS UTILES ---
 def image_url(image):
     if not image: return ""
     if image.startswith("http"): return image
@@ -38,7 +38,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# --- ROUTES DU SITE PUBLIC ---
+# --- ROUTES PUBLIQUES ---
 @app.route("/")
 def index():
     produits = Produit.query.all()
@@ -66,10 +66,6 @@ def panier():
 def contact():
     return render_template("contact.html", whatsapp_number=WHATSAPP_NUMBER, info=INFO_LIVRAISON)
 
-@app.route("/api/whatsapp-number")
-def get_whatsapp():
-    return jsonify({"number": WHATSAPP_NUMBER})
-
 # --- ROUTES ADMIN ---
 @app.route("/admin", methods=["GET", "POST"])
 def admin_login():
@@ -91,7 +87,7 @@ def admin_logout():
 @login_required
 def admin_dashboard():
     produits = Produit.query.all()
-    return render_template("admin_dashboard.html", produits=produits, image_url=image_url)
+    return render_template("admin_dashboard.html", produits=produits, image_url=image_url, edit=None)
 
 @app.route("/admin/ajouter", methods=["POST"])
 @login_required
@@ -99,14 +95,61 @@ def admin_ajouter():
     nom = request.form.get("nom")
     prix = request.form.get("prix")
     categorie = request.form.get("categorie")
-    image = request.form.get("image")
     description = request.form.get("description")
     
-    nouveau_produit = Produit(nom=nom, prix=int(prix), categorie=categorie, image=image, description=description)
-    db.session.add(nouveau_produit)
-    db.session.commit()
-    flash("Produit ajoute avec succes !", "success")
+    # Gestion de l'image (Upload)
+    image_file = request.files.get("image_file")
+    image_url_input = request.form.get("image_url")
+    
+    nom_image = ""
+    if image_file and image_file.filename != "":
+        filename = secure_filename(image_file.filename)
+        # Ajout d'un prefixe unique pour eviter les doublons
+        import time
+        filename = str(int(time.time())) + "_" + filename
+        image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        nom_image = filename
+    elif image_url_input:
+        nom_image = image_url_input
+
+    if nom and prix and categorie and nom_image:
+        nouveau = Produit(nom=nom, prix=int(prix), categorie=categorie, image=nom_image, description=description)
+        db.session.add(nouveau)
+        db.session.commit()
+        flash("Produit ajoute avec succes !", "success")
+    else:
+        flash("Erreur : Veuillez remplir tous les champs obligatoires.", "error")
+        
     return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/modifier/<int:id>", methods=["GET", "POST"])
+@login_required
+def admin_modifier(id):
+    produit = Produit.query.get_or_404(id)
+    if request.method == "POST":
+        produit.nom = request.form.get("nom")
+        produit.prix = int(request.form.get("prix"))
+        produit.categorie = request.form.get("categorie")
+        produit.description = request.form.get("description")
+        
+        # Nouvelle image si fournie
+        image_file = request.files.get("image_file")
+        image_url_input = request.form.get("image_url")
+        
+        if image_file and image_file.filename != "":
+            filename = secure_filename(image_file.filename)
+            import time
+            filename = str(int(time.time())) + "_" + filename
+            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            produit.image = filename
+        elif image_url_input:
+            produit.image = image_url_input
+            
+        db.session.commit()
+        flash("Produit modifie avec succes !", "success")
+        return redirect(url_for("admin_dashboard"))
+        
+    return render_template("admin_dashboard.html", produits=Produit.query.all(), image_url=image_url, edit=produit)
 
 @app.route("/admin/supprimer/<int:id>")
 @login_required
@@ -117,14 +160,11 @@ def admin_supprimer(id):
     flash("Produit supprime.", "success")
     return redirect(url_for("admin_dashboard"))
 
-# --- INITIALISATION DE LA BASE ---
 with app.app_context():
     db.create_all()
     if Produit.query.count() == 0:
         p1 = Produit(nom="Robe Elegante Noire", prix=35, categorie="femme", image="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop", description="Robe de soiree chic.")
-        p2 = Produit(nom="Chemise Homme Bleue", prix=28, categorie="homme", image="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400&h=500&fit=crop", description="Chemise coton.")
-        p3 = Produit(nom="Valise Cabine Rouge", prix=55, categorie="valise", image="https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=400&h=500&fit=crop", description="Valise rigide.")
-        db.session.add_all([p1, p2, p3])
+        db.session.add(p1)
         db.session.commit()
 
 if __name__ == "__main__":
