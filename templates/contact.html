@@ -12,7 +12,18 @@
     <div class="contact-grid">
         <!-- FORMULAIRE -->
         <div class="contact-form-box">
-            <h2>Formulaire de commande</h2>
+            <h2>Nous envoyer un message</h2>
+<form method="POST" action="/contact">
+    <label>Nom complet</label>
+    <input type="text" name="nom" required>
+    <label>Email</label>
+    <input type="email" name="email" required>
+    <label>Message</label>
+    <textarea name="message" rows="3" required></textarea>
+    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Envoyer par Email</button>
+</form>
+<hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+<h2>Ou commander sur WhatsApp</h2>
             <form onsubmit="envoyerFormulaireContact(event)">
                 <label>Nom complet *</label>
                 <input type="text" id="nom" required placeholder="Votre nom">
@@ -76,3 +87,4 @@
     const WHATSAPP_NUMBER = "{{ whatsapp_number }}";
 </script>
 {% endblock %}
+

@@ -234,3 +234,14 @@ footer { text-align: center; padding: 30px; background: #111; color: #888; margi
     .search-form input { border: none; outline: none; padding: 5px; width: 120px; font-family: 'Poppins', sans-serif; font-size: 0.85rem; }
 }
 
+
+/* MODE SOMBRE */
+body.dark-mode { background: #121212; color: #eee; }
+body.dark-mode .navbar { background: #000; }
+body.dark-mode .produit-card, body.dark-mode .contact-form-box, body.dark-mode .contact-info-box { background: #1e1e1e; color: #eee; border-color: #333; }
+body.dark-mode .produit-card h3, body.dark-mode .produits-section h2, body.dark-mode .contact-section h1 { color: #fff; }
+body.dark-mode .cat-card { background: #1e1e1e; color: #fff; border-color: #333; }
+body.dark-mode .hero { background: linear-gradient(135deg, #000, #880e4f) !important; }
+body.dark-mode footer { background: #000; }
+body.dark-mode input, body.dark-mode textarea, body.dark-mode select { background: #333; color: #fff; border-color: #555; }
+body.dark-mode .bandeau-livraison { background: #1b5e20; }

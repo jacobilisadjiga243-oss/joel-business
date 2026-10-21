@@ -27,7 +27,7 @@
         <a href="/produits?categorie=homme">Homme</a>
         <a href="/produits?categorie=valise">Valises</a>
         <a href="/produits?categorie=autres">Autres</a>
-        <a href="/contact">Contact</a>
+        <a href="/apropos">A propos</a>`n        <a href="/suivi">Suivi</a>`n        <a href="/contact">Contact</a>`n        <button onclick="toggleDarkMode()" id="dark-mode-btn" style="background:none; border:none; font-size:1.2rem; cursor:pointer; margin-left:10px;">🌙</button>
         <a href="/panier" class="cart-btn">Panier (<span id="cart-count">0</span>)</a>
     </nav>
 </header>
@@ -46,6 +46,24 @@
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 {% block scripts %}{% endblock %}
+<script>
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const btn = document.getElementById('dark-mode-btn');
+        if(document.body.classList.contains('dark-mode')) {
+            btn.innerHTML = '☀️';
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            btn.innerHTML = '🌙';
+            localStorage.setItem('darkMode', 'disabled');
+        }
+    }
+    if(localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('dark-mode-btn').innerHTML = '☀️';
+    }
+</script>
 </body>
 </html>
+
 

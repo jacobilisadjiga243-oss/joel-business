@@ -6,6 +6,8 @@ import os
 from werkzeug.utils import secure_filename
 import time
 from PIL import Image
+import smtplib
+from email.mime.text import MIMEText
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -13,6 +15,8 @@ db = SQLAlchemy(app)
 
 WHATSAPP_NUMBER = "243992519112"
 ADMIN_PASSWORD = "joel2026"
+EMAIL_EXPEDITEUR = "ton.email@gmail.com" # ⚠️ À MODIFIER
+EMAIL_MOT_DE_PASSE = "ton_mot_de_passe_application" # ⚠️ À MODIFIER
 
 class Produit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,14 +47,28 @@ class Transaction(db.Model):
     statut = db.Column(db.String(20), default="En attente")
     date = db.Column(db.DateTime, default=db.func.now())
 
-# NOUVEAU : Table pour les avis clients
 class Avis(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
     note = db.Column(db.Integer, nullable=False, default=5)
     commentaire = db.Column(db.Text, nullable=False)
     date = db.Column(db.DateTime, default=db.func.now())
-    approuve = db.Column(db.Boolean, default=False) # False = En attente, True = Approuve
+    approuve = db.Column(db.Boolean, default=False)
+
+# NOUVEAU : Table pour suivre les commandes
+class Commande(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    telephone = db.Column(db.String(20), nullable=False)
+    reference = db.Column(db.String(50), unique=True)
+    statut = db.Column(db.String(50), default="En preparation")
+    date = db.Column(db.DateTime, default=db.func.now())
+
+# NOUVEAU : Table pour les codes promo
+class CodePromo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(20), unique=True, nullable=False)
+    reduction = db.Column(db.Integer, nullable=False) # Pourcentage
+    actif = db.Column(db.Boolean, default=True)
 
 def image_url(image):
     if not image: return ""
@@ -71,21 +89,20 @@ def index():
     tous_produits = Produit.query.order_by(Produit.id.desc()).all()
     top_ventes = tous_produits[:4]
     nouveautes = tous_produits[4:8]
-    
-    # On ne recupere que les avis approuves par l'admin
     avis_clients = Avis.query.filter_by(approuve=True).order_by(Avis.date.desc()).limit(3).all()
-    
     info = Parametre.query.first()
     if not info: info = Parametre()
     return render_template("index.html", top_ventes=top_ventes, nouveautes=nouveautes, avis_clients=avis_clients, image_url=image_url, info=info)
 
-# NOUVEAU : Route pour ajouter un avis
+@app.route("/apropos")
+def apropos():
+    return render_template("apropos.html")
+
 @app.route("/ajouter-avis", methods=["POST"])
 def ajouter_avis():
     nom = request.form.get("nom")
     note = int(request.form.get("note", 5))
     commentaire = request.form.get("commentaire")
-    
     if nom and commentaire:
         nouvel_avis = Avis(nom=nom, note=note, commentaire=commentaire, approuve=False)
         db.session.add(nouvel_avis)
@@ -93,7 +110,6 @@ def ajouter_avis():
         flash("Merci ! Votre avis a bien ete envoye et sera publie apres validation.", "success")
     else:
         flash("Erreur : Veuillez remplir tous les champs.", "error")
-        
     return redirect(url_for("index") + "#avis")
 
 @app.route("/produits")
@@ -117,11 +133,43 @@ def produit_detail(id):
 def panier():
     return render_template("panier.html", whatsapp_number=WHATSAPP_NUMBER)
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
+    if request.method == "POST":
+        nom = request.form.get("nom")
+        email = request.form.get("email")
+        message = request.form.get("message")
+        try:
+            msg = MIMEText(f"Nom: {nom}\nEmail: {email}\n\nMessage:\n{message}")
+            msg['Subject'] = f"Nouveau message de {nom} - Joel Business"
+            msg['From'] = EMAIL_EXPEDITEUR
+            msg['To'] = EMAIL_EXPEDITEUR
+            
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(EMAIL_EXPEDITEUR, EMAIL_MOT_DE_PASSE)
+            server.send_message(msg)
+            server.quit()
+            flash("Message envoye avec succes !", "success")
+        except Exception as e:
+            flash("Erreur lors de l'envoi de l'email.", "error")
+            print(e)
+        return redirect(url_for("contact"))
+    
     info = Parametre.query.first()
     if not info: info = Parametre()
     return render_template("contact.html", whatsapp_number=WHATSAPP_NUMBER, info=info)
+
+@app.route("/suivi", methods=["GET", "POST"])
+def suivi():
+    commande = None
+    if request.method == "POST":
+        telephone = request.form.get("telephone")
+        reference = request.form.get("reference")
+        commande = Commande.query.filter_by(telephone=telephone, reference=reference).first()
+        if not commande:
+            flash("Aucune commande trouvee avec ces informations.", "error")
+    return render_template("suivi.html", commande=commande)
 
 # --- ROUTES ADMIN ---
 @app.route("/admin", methods=["GET", "POST"])
@@ -149,21 +197,61 @@ def admin_dashboard():
         info = Parametre()
         db.session.add(info)
         db.session.commit()
-    
-    # NOUVEAU : On recupere les avis en attente pour l'admin
     avis_en_attente = Avis.query.filter_by(approuve=False).order_by(Avis.date.desc()).all()
     avis_approuves = Avis.query.filter_by(approuve=True).order_by(Avis.date.desc()).all()
-    
-    return render_template("admin_dashboard.html", produits=produits, image_url=image_url, edit=None, info=info, avis_en_attente=avis_en_attente, avis_approuves=avis_approuves)
+    commandes = Commande.query.order_by(Commande.date.desc()).all()
+    codes_promo = CodePromo.query.all()
+    return render_template("admin_dashboard.html", produits=produits, image_url=image_url, edit=None, info=info, avis_en_attente=avis_en_attente, avis_approuves=avis_approuves, commandes=commandes, codes_promo=codes_promo)
 
-# NOUVEAU : Routes pour modérer les avis
+@app.route("/admin/ajouter-commande", methods=["POST"])
+@login_required
+def admin_ajouter_commande():
+    telephone = request.form.get("telephone")
+    reference = request.form.get("reference")
+    if telephone and reference:
+        nouvelle_commande = Commande(telephone=telephone, reference=reference)
+        db.session.add(nouvelle_commande)
+        db.session.commit()
+        flash("Commande ajoutee pour suivi !", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/commande-statut/<int:id>/<statut>")
+@login_required
+def admin_commande_statut(id, statut):
+    commande = Commande.query.get_or_404(id)
+    commande.statut = statut
+    db.session.commit()
+    flash("Statut mis a jour !", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/ajouter-promo", methods=["POST"])
+@login_required
+def admin_ajouter_promo():
+    code = request.form.get("code").upper()
+    reduction = request.form.get("reduction")
+    if code and reduction:
+        nouveau_code = CodePromo(code=code, reduction=int(reduction))
+        db.session.add(nouveau_code)
+        db.session.commit()
+        flash("Code promo ajoute !", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/supprimer-promo/<int:id>")
+@login_required
+def admin_supprimer_promo(id):
+    promo = CodePromo.query.get_or_404(id)
+    db.session.delete(promo)
+    db.session.commit()
+    flash("Code promo supprime.", "success")
+    return redirect(url_for("admin_dashboard"))
+
 @app.route("/admin/avis/approuver/<int:id>")
 @login_required
 def admin_avis_approuver(id):
     avis = Avis.query.get_or_404(id)
     avis.approuve = True
     db.session.commit()
-    flash("Avis approuve et publie !", "success")
+    flash("Avis approuve !", "success")
     return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/avis/supprimer/<int:id>")
@@ -238,11 +326,12 @@ def admin_modifier(id):
         db.session.commit()
         flash("Produit modifie !", "success")
         return redirect(url_for("admin_dashboard"))
-    
     info = Parametre.query.first()
     avis_en_attente = Avis.query.filter_by(approuve=False).all()
     avis_approuves = Avis.query.filter_by(approuve=True).all()
-    return render_template("admin_dashboard.html", produits=Produit.query.all(), image_url=image_url, edit=produit, info=info, avis_en_attente=avis_en_attente, avis_approuves=avis_approuves)
+    commandes = Commande.query.all()
+    codes_promo = CodePromo.query.all()
+    return render_template("admin_dashboard.html", produits=Produit.query.all(), image_url=image_url, edit=produit, info=info, avis_en_attente=avis_en_attente, avis_approuves=avis_approuves, commandes=commandes, codes_promo=codes_promo)
 
 @app.route("/admin/supprimer/<int:id>")
 @login_required
