@@ -12,9 +12,16 @@
         <p>{{ produit.description }}</p>
         <p class="categorie-tag">Categorie : {{ produit.categorie }}</p>
         
-        <button class="btn-primary" onclick="ajouterAuPanier({{ produit.id }}, '{{ produit.nom }}', {{ produit.prix }}, '{{ produit.devise }}', '{{ image_url(produit.image) }}')">
-            Ajouter au panier
-        </button>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+            <button class="btn-primary" onclick="ajouterAuPanier({{ produit.id }}, '{{ produit.nom }}', {{ produit.prix }}, '{{ produit.devise }}', '{{ image_url(produit.image) }}')">
+                Ajouter au panier
+            </button>
+            
+            <!-- NOUVEAU : Bouton WhatsApp Direct -->
+            <a href="https://wa.me/243992519112?text=Bonjour%20Joel%20Business%2C%20je%20suis%20interesse%20par%20le%20produit%20%3A%20{{ produit.nom }}%20({{ produit.prix }}%20{{ produit.devise }})." target="_blank" class="btn-whatsapp" style="text-decoration:none;">
+                Commander maintenant via WhatsApp
+            </a>
+        </div>
     </div>
 </section>
 {% endblock %}
