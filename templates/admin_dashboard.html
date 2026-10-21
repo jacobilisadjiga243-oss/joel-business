@@ -106,7 +106,19 @@
             </div>
             
             <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
-                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Bandeau Promo</label>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Couleur de fond de l'accueil</label>
+<select name="couleur_fond" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px;">
+    <option value="linear-gradient(135deg, #111, #e91e63)" {% if info.couleur_fond == "linear-gradient(135deg, #111, #e91e63)" %}selected{% endif %}>Rouge Bordeaux (Actuel)</option>
+    <option value="linear-gradient(135deg, #000428, #004e92)" {% if info.couleur_fond == "linear-gradient(135deg, #000428, #004e92)" %}selected{% endif %}>Bleu Nuit</option>
+    <option value="linear-gradient(135deg, #134e5e, #71b280)" {% if info.couleur_fond == "linear-gradient(135deg, #134e5e, #71b280)" %}selected{% endif %}>Vert Nature</option>
+    <option value="linear-gradient(135deg, #ff7e5f, #feb47b)" {% if info.couleur_fond == "linear-gradient(135deg, #ff7e5f, #feb47b)" %}selected{% endif %}>Orange Coucher de soleil</option>
+    <option value="linear-gradient(135deg, #654ea3, #eaafc8)" {% if info.couleur_fond == "linear-gradient(135deg, #654ea3, #eaafc8)" %}selected{% endif %}>Violet Elegant</option>
+    <option value="linear-gradient(135deg, #232526, #414345)" {% if info.couleur_fond == "linear-gradient(135deg, #232526, #414345)" %}selected{% endif %}>Gris Sombre</option>
+    <option value="linear-gradient(135deg, #b92b27, #1565c0)" {% if info.couleur_fond == "linear-gradient(135deg, #b92b27, #1565c0)" %}selected{% endif %}>Rouge et Bleu</option>
+    <option value="linear-gradient(135deg, #1f1c2c, #928dab)" {% if info.couleur_fond == "linear-gradient(135deg, #1f1c2c, #928dab)" %}selected{% endif %}>Mauve</option>
+</select>
+
+<label style="font-weight: bold; margin-bottom: 5px; display: block;">Bandeau Promo</label>
                 <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px;">
                     <input type="checkbox" name="promo_active" value="1" {% if info.promo_active %}checked{% endif %} style="width: 20px; height: 20px;">
                     <span>Afficher le bandeau promo sur l'accueil</span>
@@ -152,5 +164,6 @@
     </div>
 </section>
 {% endblock %}
+
 
 
