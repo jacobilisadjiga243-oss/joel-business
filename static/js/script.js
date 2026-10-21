@@ -7,13 +7,13 @@ function sauvegarderPanier(panier) {
     mettreAJourCompteur();
 }
 
-function ajouterAuPanier(id, nom, prix, image) {
+function ajouterAuPanier(id, nom, prix, devise, image) {
     let panier = getPanier();
     const existant = panier.find(p => p.id === id);
     if (existant) {
         existant.qte += 1;
     } else {
-        panier.push({ id, nom, prix, image, qte: 1 });
+        panier.push({ id, nom, prix, devise, image, qte: 1 });
     }
     sauvegarderPanier(panier);
     alert('"' + nom + '" ajoute au panier !');
@@ -56,15 +56,13 @@ function afficherPanier() {
     }
 
     let html = "";
-    let total = 0;
     panier.forEach(p => {
-        total += p.prix * p.qte;
         const imgSrc = p.image.startsWith("http") ? p.image : "/static/images/" + p.image;
         html += '<div class="panier-item">' +
             '<img src="' + imgSrc + '" alt="' + p.nom + '">' +
             '<div class="panier-info">' +
                 '<h3>' + p.nom + '</h3>' +
-                '<p>' + p.prix + ' $ x ' + p.qte + '</p>' +
+                '<p>' + p.prix + ' ' + p.devise + ' x ' + p.qte + '</p>' +
             '</div>' +
             '<div class="panier-actions">' +
                 '<button onclick="changerQte(' + p.id + ', -1)">-</button>' +
@@ -75,7 +73,7 @@ function afficherPanier() {
         '</div>';
     });
     listeDiv.innerHTML = html;
-    totalDiv.innerHTML = '<h2>Total : ' + total + ' $</h2>';
+    totalDiv.innerHTML = '<h2>Voir WhatsApp pour le total</h2>'; // Le total mélangé n'a plus de sens
 }
 
 function commanderWhatsApp() {
@@ -85,12 +83,10 @@ function commanderWhatsApp() {
         return;
     }
     let msg = "Bonjour Joel Business, je souhaite commander :\n\n";
-    let total = 0;
     panier.forEach(p => {
-        msg += "- " + p.nom + " x" + p.qte + " = " + (p.prix * p.qte) + " $\n";
-        total += p.prix * p.qte;
+        msg += "- " + p.nom + " x" + p.qte + " = " + (p.prix * p.qte) + " " + p.devise + "\n";
     });
-    msg += "\nTOTAL : " + total + " $\n\nMerci de me confirmer la disponibilite.";
+    msg += "\nMerci de me confirmer le total et la livraison.";
 
     const url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
     window.open(url, "_blank");
@@ -98,27 +94,15 @@ function commanderWhatsApp() {
 
 function envoyerFormulaireContact(event) {
     event.preventDefault();
-
     const nom = document.getElementById("nom").value.trim();
     const telephone = document.getElementById("telephone").value.trim();
     const adresse = document.getElementById("adresse").value.trim();
     const heure = document.getElementById("heure").value;
     const message = document.getElementById("message").value.trim();
 
-    if (!nom || !telephone || !adresse) {
-        alert("Merci de remplir le nom, le telephone et l'adresse.");
-        return;
-    }
-
-    let msg = "Bonjour Joel Business,\n\n";
-    msg += "Je souhaite passer une commande / avoir des informations.\n\n";
-    msg += "Nom : " + nom + "\n";
-    msg += "Telephone : " + telephone + "\n";
-    msg += "Adresse de livraison : " + adresse + "\n";
-    msg += "Heure de livraison souhaitee : " + heure + "\n";
-    if (message) {
-        msg += "\nProduits / message :\n" + message + "\n";
-    }
+    let msg = "Bonjour Joel Business,\n\nJe souhaite passer une commande.\n\n";
+    msg += "Nom : " + nom + "\nTelephone : " + telephone + "\nAdresse : " + adresse + "\nHeure : " + heure + "\n";
+    if (message) msg += "Message : " + message + "\n";
     msg += "\nMerci de me confirmer.";
 
     const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg);

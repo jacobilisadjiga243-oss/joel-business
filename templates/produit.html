@@ -8,10 +8,11 @@
     </div>
     <div class="detail-info">
         <h1>{{ produit.nom }}</h1>
-        <p class="prix-grand">{{ produit.prix }} $</p>
+        <p class="prix-grand">{{ produit.prix }} {{ produit.devise }}</p>
         <p>{{ produit.description }}</p>
         <p class="categorie-tag">Categorie : {{ produit.categorie }}</p>
-        <button class="btn-primary" onclick="ajouterAuPanier({{ produit.id }}, '{{ produit.nom }}', {{ produit.prix }}, '{{ image_url(produit.image) }}')">
+        
+        <button class="btn-primary" onclick="ajouterAuPanier({{ produit.id }}, '{{ produit.nom }}', {{ produit.prix }}, '{{ produit.devise }}', '{{ image_url(produit.image) }}')">
             Ajouter au panier
         </button>
     </div>

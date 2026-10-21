@@ -1,4 +1,4 @@
-ï»¿* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body { 
     font-family: 'Poppins', sans-serif; 
@@ -6,7 +6,7 @@ body {
     color: #222; 
 }
 
-/* Menu en dÃ©gradÃ© sombre et Ã©lÃ©gant */
+/* Menu en dégradé sombre et élégant */
 .navbar { 
     display: flex; 
     justify-content: space-between; 
@@ -18,7 +18,7 @@ body {
     top: 0; 
     z-index: 100; 
 }
-.logo a { 
+.logo a { color: white; 
     font-size: 1.5rem; 
     font-weight: 700; 
     color: #fff; 
@@ -52,7 +52,7 @@ body {
     font-size: 0.95rem; 
 }
 
-/* BanniÃ¨re principale */
+/* Bannière principale */
 .hero { 
     background: linear-gradient(135deg, #fff0f5, #f8f9fa); 
     color: #111; 
@@ -91,7 +91,7 @@ body {
 }
 .btn-secondary:hover { background: #000; }
 
-/* CatÃ©gories */
+/* Catégories */
 .categories { display: flex; justify-content: center; gap: 20px; padding: 50px 20px; flex-wrap: wrap; }
 .cat-card { 
     background: white; 
@@ -133,7 +133,7 @@ body {
 .produit-card h3 { margin: 15px 10px 5px; font-size: 1.1rem; color: #333; }
 .prix { color: #e91e63; font-weight: 700; font-size: 1.3rem; margin-bottom: 15px; }
 
-/* DÃ©tail produit */
+/* Détail produit */
 .produit-detail { 
     display: grid; 
     grid-template-columns: 1fr 1fr; 

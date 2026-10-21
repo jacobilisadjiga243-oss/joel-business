@@ -4,16 +4,51 @@
 {% block content %}
 <section class="produits-section" style="padding-top: 20px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>Gestion des produits</h2>
+        <h2>Gestion du site</h2>
         <a href="/admin/logout" class="btn-secondary" style="background: #d32f2f;">Deconnexion</a>
     </div>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <p style="color: green; font-weight: bold; margin-bottom: 15px;">{{ messages[0] }}</p>
+        <p style="color: green; font-weight: bold; margin-bottom: 15px; background: #e8f5e9; padding: 10px; border-radius: 8px;">{{ messages[0] }}</p>
       {% endif %}
     {% endwith %}
 
+    <!-- NOUVEAU : Formulaire Infos Livraison -->
+    <div class="contact-form-box" style="margin-bottom: 30px; background: #f0f8ff;">
+        <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison</h3>
+        <form method="POST" action="/admin/infos">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label>Ville</label>
+                    <input type="text" name="ville" value="{{ info.ville }}" required>
+                </div>
+                <div>
+                    <label>Quartier / Zone</label>
+                    <input type="text" name="quartier" value="{{ info.quartier }}" required>
+                </div>
+                <div>
+                    <label>Frais de livraison</label>
+                    <input type="text" name="frais" value="{{ info.frais }}" required>
+                </div>
+                <div>
+                    <label>Delai</label>
+                    <input type="text" name="delai" value="{{ info.delai }}" required>
+                </div>
+                <div>
+                    <label>Heure d'ouverture</label>
+                    <input type="time" name="heure_debut" value="{{ info.heure_debut }}" required>
+                </div>
+                <div>
+                    <label>Heure de fermeture</label>
+                    <input type="time" name="heure_fin" value="{{ info.heure_fin }}" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-secondary" style="background: #1976d2; margin-top: 15px; width: 100%;">Enregistrer les infos de livraison</button>
+        </form>
+    </div>
+
+    <!-- Formulaire d'ajout / modification de produit -->
     <div class="contact-form-box" style="margin-bottom: 30px;">
         <h3 style="margin-bottom: 15px;">{% if edit %}Modifier le produit{% else %}Ajouter un produit{% endif %}</h3>
         <form method="POST" action="{% if edit %}/admin/modifier/{{ edit.id }}{% else %}/admin/ajouter{% endif %}" enctype="multipart/form-data">
