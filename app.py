@@ -124,7 +124,7 @@ def produit_detail(id):
 def panier():
     return render_template("panier.html", whatsapp_number=WHATSAPP_NUMBER)
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
     info = Parametre.query.first()
     if not info: info = Parametre()
@@ -300,4 +300,6 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
 

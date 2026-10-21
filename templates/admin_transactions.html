@@ -1,0 +1,40 @@
+﻿{% extends "base.html" %}
+{% block title %}Transactions - Joel Business{% endblock %}
+{% block content %}
+<section class="produits-section">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>💳 Transactions Mobile Money</h2>
+        <a href="/admin/dashboard" class="btn-secondary">Retour</a>
+    </div>
+    <p style="margin-bottom:20px; color:#666;">Les paiements Airtel Money et M-Pesa apparaitront ici automatiquement.</p>
+    
+    <div style="background:white; border-radius:12px; padding:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05);">
+        {% if transactions %}
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom:2px solid #eee; text-align:left;">
+                    <th style="padding:10px;">Date</th>
+                    <th style="padding:10px;">Reference</th>
+                    <th style="padding:10px;">Montant</th>
+                    <th style="padding:10px;">Telephone</th>
+                    <th style="padding:10px;">Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px;">{{ t.date.strftime('%d/%m/%Y %H:%M') if t.date else '-' }}</td>
+                    <td style="padding:10px;">{{ t.reference }}</td>
+                    <td style="padding:10px;">{{ t.montant }} {{ t.devise }}</td>
+                    <td style="padding:10px;">{{ t.telephone }}</td>
+                    <td style="padding:10px;"><span style="padding:4px 10px; border-radius:12px; background:{% if t.statut == 'Reussi' %}#e8f5e9{% elif t.statut == 'Echoue' %}#ffebee{% else %}#fff3e0{% endif %};">{{ t.statut }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="text-align:center; color:#999; padding:30px;">Aucune transaction pour le moment.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
