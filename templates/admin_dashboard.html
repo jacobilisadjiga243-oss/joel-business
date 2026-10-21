@@ -1,0 +1,50 @@
+﻿{% extends "base.html" %}
+{% block title %}Tableau de Bord - Joel Business{% endblock %}
+
+{% block content %}
+<section class="produits-section" style="padding-top: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Gestion des produits</h2>
+        <a href="/admin/logout" class="btn-secondary" style="background: #d32f2f;">Deconnexion</a>
+    </div>
+
+    <!-- Formulaire d'ajout -->
+    <div class="contact-form-box" style="margin-bottom: 30px;">
+        <h3 style="margin-bottom: 15px;">Ajouter un produit</h3>
+        <form method="POST" action="/admin/ajouter">
+            <label>Nom du produit</label>
+            <input type="text" name="nom" required>
+            
+            <label>Prix ($)</label>
+            <input type="number" name="prix" required>
+            
+            <label>Categorie</label>
+            <select name="categorie" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:10px;">
+                <option value="femme">Femme</option>
+                <option value="homme">Homme</option>
+                <option value="valise">Valise</option>
+            </select>
+            
+            <label>Lien de l'image (URL de la photo)</label>
+            <input type="text" name="image" placeholder="https://..." required>
+            
+            <label>Description</label>
+            <textarea name="description" rows="2"></textarea>
+            
+            <button type="submit" class="btn-whatsapp">Ajouter au catalogue</button>
+        </form>
+    </div>
+
+    <!-- Liste des produits existants -->
+    <h3>Produits en ligne</h3>
+    <div class="produits-grid" style="margin-top: 15px;">
+        {% for p in produits %}
+        <div class="produit-card" style="padding-bottom: 10px;">
+            <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}" style="height: 150px;">
+            <h3 style="font-size: 1rem;">{{ p.nom }} ({{ p.prix }} $)</h3>
+            <a href="/admin/supprimer/{{ p.id }}" class="btn-secondary" style="background: #d32f2f; margin-top: 5px;" onclick="return confirm('Supprimer ce produit ?')">Supprimer</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

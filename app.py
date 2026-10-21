@@ -1,91 +1,131 @@
-﻿from flask import Flask, render_template, request, jsonify
+﻿from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
+from flask_sqlalchemy import SQLAlchemy
+from config import Config
+from functools import wraps
 
 app = Flask(__name__)
+app.config.from_object(Config)
+db = SQLAlchemy(app)
 
-# Numero WhatsApp business de Joel
 WHATSAPP_NUMBER = "243992519112"
+ADMIN_PASSWORD = "joel2026" # ⚠️ Mot de passe pour l'admin
 
-# Infos de livraison (PROVISOIRE - a modifier plus tard)
 INFO_LIVRAISON = {
-    "ville": "Kinshasa",
-    "quartier": "A preciser",
-    "frais": "A confirmer selon la zone",
-    "delai": "24 a 48h",
-    "heure_debut": "08:00",
-    "heure_fin": "20:00",
+    "ville": "Kinshasa", "quartier": "A preciser", "frais": "A confirmer selon la zone",
+    "delai": "24 a 48h", "heure_debut": "08:00", "heure_fin": "20:00",
 }
 
-PRODUITS = [
-    {"id": 1, "nom": "Robe Elegante Noire", "prix": 35, "categorie": "femme",
-     "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop",
-     "description": "Robe de soiree chic, tissu satine."},
-    {"id": 2, "nom": "Robe Ete Fleurie", "prix": 25, "categorie": "femme",
-     "image": "https://images.unsplash.com/photo-1596783074918-c84cb06531ca?w=400&h=500&fit=crop",
-     "description": "Robe legere parfaite pour l'ete."},
-    {"id": 3, "nom": "Pantalon Femme Beige", "prix": 22, "categorie": "femme",
-     "image": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=500&fit=crop",
-     "description": "Pantalon fluide, taille haute."},
-    {"id": 4, "nom": "Chemise Homme Bleue", "prix": 28, "categorie": "homme",
-     "image": "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400&h=500&fit=crop",
-     "description": "Chemise coton, coupe slim."},
-    {"id": 5, "nom": "Pantalon Homme Noir", "prix": 30, "categorie": "homme",
-     "image": "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400&h=500&fit=crop",
-     "description": "Pantalon costume, elegant."},
-    {"id": 6, "nom": "Costume Homme Gris", "prix": 75, "categorie": "homme",
-     "image": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&h=500&fit=crop",
-     "description": "Ensemble veste + pantalon."},
-    {"id": 7, "nom": "Valise Cabine Rouge", "prix": 55, "categorie": "valise",
-     "image": "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=400&h=500&fit=crop",
-     "description": "Valise rigide avec roulettes."},
-    {"id": 8, "nom": "Grande Valise Bleue", "prix": 80, "categorie": "valise",
-     "image": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&h=500&fit=crop",
-     "description": "Grande capacite, coque solide."},
-]
+# --- MODELES (BASE DE DONNEES) ---
+class Produit(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(100), nullable=False)
+    prix = db.Column(db.Integer, nullable=False)
+    categorie = db.Column(db.String(50), nullable=False)
+    image = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)
 
-
+# --- FONCTIONS UTILES ---
 def image_url(image):
-    if image.startswith("http"):
-        return image
+    if not image: return ""
+    if image.startswith("http"): return image
     return "/static/images/" + image
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("admin"):
+            return redirect(url_for("admin_login"))
+        return f(*args, **kwargs)
+    return decorated_function
 
+# --- ROUTES DU SITE PUBLIC ---
 @app.route("/")
 def index():
-    return render_template("index.html", produits=PRODUITS, image_url=image_url)
-
+    produits = Produit.query.all()
+    return render_template("index.html", produits=produits, image_url=image_url)
 
 @app.route("/produits")
 def produits_page():
     categorie = request.args.get("categorie", "tous")
     if categorie == "tous":
-        liste = PRODUITS
+        liste = Produit.query.all()
     else:
-        liste = [p for p in PRODUITS if p["categorie"] == categorie]
+        liste = Produit.query.filter_by(categorie=categorie).all()
     return render_template("produits.html", produits=liste, categorie=categorie, image_url=image_url)
-
 
 @app.route("/produit/<int:id>")
 def produit_detail(id):
-    produit = next((p for p in PRODUITS if p["id"] == id), None)
-    if not produit:
-        return "Produit introuvable", 404
+    produit = Produit.query.get_or_404(id)
     return render_template("produit.html", produit=produit, image_url=image_url)
-
 
 @app.route("/panier")
 def panier():
     return render_template("panier.html", whatsapp_number=WHATSAPP_NUMBER)
 
-
 @app.route("/contact")
 def contact():
     return render_template("contact.html", whatsapp_number=WHATSAPP_NUMBER, info=INFO_LIVRAISON)
-
 
 @app.route("/api/whatsapp-number")
 def get_whatsapp():
     return jsonify({"number": WHATSAPP_NUMBER})
 
+# --- ROUTES ADMIN ---
+@app.route("/admin", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        password = request.form.get("password")
+        if password == ADMIN_PASSWORD:
+            session["admin"] = True
+            return redirect(url_for("admin_dashboard"))
+        else:
+            flash("Mot de passe incorrect", "error")
+    return render_template("admin_login.html")
+
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("admin", None)
+    return redirect(url_for("index"))
+
+@app.route("/admin/dashboard")
+@login_required
+def admin_dashboard():
+    produits = Produit.query.all()
+    return render_template("admin_dashboard.html", produits=produits, image_url=image_url)
+
+@app.route("/admin/ajouter", methods=["POST"])
+@login_required
+def admin_ajouter():
+    nom = request.form.get("nom")
+    prix = request.form.get("prix")
+    categorie = request.form.get("categorie")
+    image = request.form.get("image")
+    description = request.form.get("description")
+    
+    nouveau_produit = Produit(nom=nom, prix=int(prix), categorie=categorie, image=image, description=description)
+    db.session.add(nouveau_produit)
+    db.session.commit()
+    flash("Produit ajoute avec succes !", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/supprimer/<int:id>")
+@login_required
+def admin_supprimer(id):
+    produit = Produit.query.get_or_404(id)
+    db.session.delete(produit)
+    db.session.commit()
+    flash("Produit supprime.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+# --- INITIALISATION DE LA BASE ---
+with app.app_context():
+    db.create_all()
+    if Produit.query.count() == 0:
+        p1 = Produit(nom="Robe Elegante Noire", prix=35, categorie="femme", image="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop", description="Robe de soiree chic.")
+        p2 = Produit(nom="Chemise Homme Bleue", prix=28, categorie="homme", image="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400&h=500&fit=crop", description="Chemise coton.")
+        p3 = Produit(nom="Valise Cabine Rouge", prix=55, categorie="valise", image="https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=400&h=500&fit=crop", description="Valise rigide.")
+        db.session.add_all([p1, p2, p3])
+        db.session.commit()
 
 if __name__ == "__main__":
     app.run(debug=True)
