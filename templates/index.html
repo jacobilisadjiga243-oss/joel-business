@@ -2,10 +2,11 @@
 {% block title %}Accueil - Joel Business{% endblock %}
 
 {% block content %}
-<!-- NOUVEAU : Bandeau Promo -->
+{% if info.promo_active %}
 <div class="bandeau-promo">
-    🔥 PROMO : Livraison offerte a Gbadolite et Mobayi-Mbongo des 50$ d'achat ! Passez commande sur WhatsApp.
+    🔥 {{ info.promo_texte }}
 </div>
+{% endif %}
 
 <section class="bandeau-livraison">
     Livraison a domicile partout a Gbadolite et Mobayi-Mbongo | Commandez sur WhatsApp

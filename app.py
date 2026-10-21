@@ -31,6 +31,17 @@ class Parametre(db.Model):
     delai = db.Column(db.String(100), default="24 a 48h")
     heure_debut = db.Column(db.String(10), default="08:00")
     heure_fin = db.Column(db.String(10), default="20:00")
+    promo_texte = db.Column(db.String(255), default="PROMO : Livraison offerte des 50$ d'achat !")
+    promo_active = db.Column(db.Boolean, default=False)
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reference = db.Column(db.String(100), unique=True)
+    montant = db.Column(db.String(50))
+    devise = db.Column(db.String(10))
+    telephone = db.Column(db.String(20))
+    statut = db.Column(db.String(20), default="En attente")
+    date = db.Column(db.DateTime, default=db.func.now())
 
 def image_url(image):
     if not image: return ""
@@ -45,11 +56,12 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# --- ROUTES PUBLIQUES ---
 @app.route("/")
 def index():
     produits = Produit.query.all()
-    return render_template("index.html", produits=produits, image_url=image_url)
+    info = Parametre.query.first()
+    if not info: info = Parametre()
+    return render_template("index.html", produits=produits, image_url=image_url, info=info)
 
 @app.route("/produits")
 def produits_page():
@@ -72,11 +84,9 @@ def panier():
 @app.route("/contact")
 def contact():
     info = Parametre.query.first()
-    if not info:
-        info = Parametre()
+    if not info: info = Parametre()
     return render_template("contact.html", whatsapp_number=WHATSAPP_NUMBER, info=info)
 
-# --- ROUTES ADMIN ---
 @app.route("/admin", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
@@ -104,6 +114,12 @@ def admin_dashboard():
         db.session.commit()
     return render_template("admin_dashboard.html", produits=produits, image_url=image_url, edit=None, info=info)
 
+@app.route("/admin/transactions")
+@login_required
+def admin_transactions():
+    transactions = Transaction.query.order_by(Transaction.date.desc()).all()
+    return render_template("admin_transactions.html", transactions=transactions)
+
 @app.route("/admin/ajouter", methods=["POST"])
 @login_required
 def admin_ajouter():
@@ -112,10 +128,8 @@ def admin_ajouter():
     devise = request.form.get("devise", "$")
     categorie = request.form.get("categorie")
     description = request.form.get("description")
-    
     image_file = request.files.get("image_file")
     image_url_input = request.form.get("image_url")
-    
     nom_image = ""
     if image_file and image_file.filename != "":
         filename = "img_" + str(int(time.time())) + ".jpg"
@@ -125,19 +139,16 @@ def admin_ajouter():
             if img.mode in ("RGBA", "P"): img = img.convert("RGB")
             img.save(filepath, "JPEG", quality=85)
             nom_image = filename
-        except Exception as e:
-            print(f"Erreur image : {e}")
+        except Exception as e: print(f"Erreur image : {e}")
     elif image_url_input:
         nom_image = image_url_input
-
     if nom and prix and categorie and nom_image:
         nouveau = Produit(nom=nom, prix=int(prix), devise=devise, categorie=categorie.lower(), image=nom_image, description=description)
         db.session.add(nouveau)
         db.session.commit()
-        flash("Produit ajoute avec succes !", "success")
+        flash("Produit ajoute !", "success")
     else:
-        flash("Erreur : Veuillez remplir tous les champs ou verifier l'image.", "error")
-        
+        flash("Erreur : champs manquants.", "error")
     return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/modifier/<int:id>", methods=["GET", "POST"])
@@ -150,10 +161,8 @@ def admin_modifier(id):
         produit.devise = request.form.get("devise", "$")
         produit.categorie = request.form.get("categorie").lower()
         produit.description = request.form.get("description")
-        
         image_file = request.files.get("image_file")
         image_url_input = request.form.get("image_url")
-        
         if image_file and image_file.filename != "":
             filename = "img_" + str(int(time.time())) + ".jpg"
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -162,15 +171,12 @@ def admin_modifier(id):
                 if img.mode in ("RGBA", "P"): img = img.convert("RGB")
                 img.save(filepath, "JPEG", quality=85)
                 produit.image = filename
-            except Exception as e:
-                print(f"Erreur image : {e}")
+            except Exception as e: print(f"Erreur image : {e}")
         elif image_url_input:
             produit.image = image_url_input
-            
         db.session.commit()
-        flash("Produit modifie avec succes !", "success")
+        flash("Produit modifie !", "success")
         return redirect(url_for("admin_dashboard"))
-        
     info = Parametre.query.first()
     return render_template("admin_dashboard.html", produits=Produit.query.all(), image_url=image_url, edit=produit, info=info)
 
@@ -190,19 +196,18 @@ def admin_infos():
     if not info:
         info = Parametre()
         db.session.add(info)
-    
     info.ville = request.form.get("ville")
     info.quartier = request.form.get("quartier")
     info.frais = request.form.get("frais")
     info.delai = request.form.get("delai")
     info.heure_debut = request.form.get("heure_debut")
     info.heure_fin = request.form.get("heure_fin")
-    
+    info.promo_texte = request.form.get("promo_texte")
+    info.promo_active = True if request.form.get("promo_active") else False
     db.session.commit()
-    flash("Informations de livraison mises a jour !", "success")
+    flash("Infos mises a jour !", "success")
     return redirect(url_for("admin_dashboard"))
 
-# --- CREATION DES DOSSIERS ET DE LA BASE ---
 if not os.path.exists(app.config["UPLOAD_FOLDER"]):
     os.makedirs(app.config["UPLOAD_FOLDER"])
 

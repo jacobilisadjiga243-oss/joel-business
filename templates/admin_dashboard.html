@@ -3,85 +3,56 @@
 
 {% block content %}
 <section class="produits-section" style="padding-top: 20px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
         <h2>Gestion du site</h2>
-        <a href="/admin/logout" class="btn-secondary" style="background: #d32f2f;">Deconnexion</a>
+        <div>
+            <a href="/admin/transactions" class="btn-secondary" style="background: #6a1b9a;">💳 Transactions</a>
+            <a href="/admin/logout" class="btn-secondary" style="background: #d32f2f; margin-left: 5px;">Deconnexion</a>
+        </div>
     </div>
 
     {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <p style="color: green; font-weight: bold; margin-bottom: 15px; background: #e8f5e9; padding: 10px; border-radius: 8px;">{{ messages[0] }}</p>
-      {% endif %}
+      {% if messages %}<p style="color: green; font-weight: bold; margin-bottom: 15px; background: #e8f5e9; padding: 10px; border-radius: 8px;">{{ messages[0] }}</p>{% endif %}
     {% endwith %}
 
-    <!-- NOUVEAU : Formulaire Infos Livraison -->
     <div class="contact-form-box" style="margin-bottom: 30px; background: #f0f8ff;">
-        <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison</h3>
+        <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison et promo</h3>
         <form method="POST" action="/admin/infos">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div>
-                    <label>Ville</label>
-                    <input type="text" name="ville" value="{{ info.ville }}" required>
-                </div>
-                <div>
-                    <label>Quartier / Zone</label>
-                    <input type="text" name="quartier" value="{{ info.quartier }}" required>
-                </div>
-                <div>
-                    <label>Frais de livraison</label>
-                    <input type="text" name="frais" value="{{ info.frais }}" required>
-                </div>
-                <div>
-                    <label>Delai</label>
-                    <input type="text" name="delai" value="{{ info.delai }}" required>
-                </div>
-                <div>
-                    <label>Heure d'ouverture</label>
-                    <input type="time" name="heure_debut" value="{{ info.heure_debut }}" required>
-                </div>
-                <div>
-                    <label>Heure de fermeture</label>
-                    <input type="time" name="heure_fin" value="{{ info.heure_fin }}" required>
-                </div>
+                <div><label>Ville</label><input type="text" name="ville" value="{{ info.ville }}" required></div>
+                <div><label>Quartier / Zone</label><input type="text" name="quartier" value="{{ info.quartier }}" required></div>
+                <div><label>Frais de livraison</label><input type="text" name="frais" value="{{ info.frais }}" required></div>
+                <div><label>Delai</label><input type="text" name="delai" value="{{ info.delai }}" required></div>
+                <div><label>Heure ouverture</label><input type="time" name="heure_debut" value="{{ info.heure_debut }}" required></div>
+                <div><label>Heure fermeture</label><input type="time" name="heure_fin" value="{{ info.heure_fin }}" required></div>
             </div>
-            <button type="submit" class="btn-secondary" style="background: #1976d2; margin-top: 15px; width: 100%;">Enregistrer les infos de livraison</button>
+            
+            <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Bandeau Promo</label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px;">
+                    <input type="checkbox" name="promo_active" value="1" {% if info.promo_active %}checked{% endif %} style="width: 20px; height: 20px;">
+                    <span>Afficher le bandeau promo sur l'accueil</span>
+                </label>
+                <input type="text" name="promo_texte" value="{{ info.promo_texte }}" placeholder="Texte de la promo" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+
+            <button type="submit" class="btn-secondary" style="background: #1976d2; margin-top: 15px; width: 100%;">Enregistrer les infos</button>
         </form>
     </div>
 
-    <!-- Formulaire d'ajout / modification de produit -->
     <div class="contact-form-box" style="margin-bottom: 30px;">
         <h3 style="margin-bottom: 15px;">{% if edit %}Modifier le produit{% else %}Ajouter un produit{% endif %}</h3>
         <form method="POST" action="{% if edit %}/admin/modifier/{{ edit.id }}{% else %}/admin/ajouter{% endif %}" enctype="multipart/form-data">
-            <label>Nom du produit</label>
-            <input type="text" name="nom" value="{{ edit.nom if edit else '' }}" required>
-            
+            <label>Nom du produit</label><input type="text" name="nom" value="{{ edit.nom if edit else '' }}" required>
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;">
-                    <label>Prix</label>
-                    <input type="number" name="prix" value="{{ edit.prix if edit else '' }}" required style="width:100%;">
-                </div>
-                <div style="flex:1;">
-                    <label>Devise</label>
-                    <select name="devise" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;">
-                        <option value="$" {% if edit and edit.devise == '$' %}selected{% endif %}>Dollar ($)</option>
-                        <option value="FC" {% if edit and edit.devise == 'FC' %}selected{% endif %}>Franc Congolais (FC)</option>
-                    </select>
-                </div>
+                <div style="flex:1;"><label>Prix</label><input type="number" name="prix" value="{{ edit.prix if edit else '' }}" required style="width:100%;"></div>
+                <div style="flex:1;"><label>Devise</label><select name="devise" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;"><option value="$" {% if edit and edit.devise == '$' %}selected{% endif %}>Dollar ($)</option><option value="FC" {% if edit and edit.devise == 'FC' %}selected{% endif %}>Franc Congolais (FC)</option></select></div>
             </div>
-            
-            <label>Categorie</label>
-            <input type="text" name="categorie" list="categories-list" value="{{ edit.categorie if edit else '' }}" placeholder="Ex: Chaussures, Sacs..." required>
-            <datalist id="categories-list">
-                <option value="femme"><option value="homme"><option value="valise"><option value="autres">
-            </datalist>
-            
-            <label>Photo (depuis le telephone/PC)</label>
-            <input type="file" name="image_file" accept="image/*" style="margin-bottom: 10px;">
+            <label>Categorie</label><input type="text" name="categorie" list="categories-list" value="{{ edit.categorie if edit else '' }}" placeholder="Ex: Chaussures..." required>
+            <datalist id="categories-list"><option value="femme"><option value="homme"><option value="valise"><option value="autres"></datalist>
+            <label>Photo</label><input type="file" name="image_file" accept="image/*" style="margin-bottom: 10px;">
             <input type="text" name="image_url" value="{{ edit.image if edit and edit.image.startswith('http') else '' }}" placeholder="Ou coller un lien https://...">
-            
-            <label>Description</label>
-            <textarea name="description" rows="2">{{ edit.description if edit else '' }}</textarea>
-            
+            <label>Description</label><textarea name="description" rows="2">{{ edit.description if edit else '' }}</textarea>
             <button type="submit" class="btn-whatsapp" style="margin-top:15px;">{% if edit %}Enregistrer{% else %}Ajouter au catalogue{% endif %}</button>
             {% if edit %}<a href="/admin/dashboard" class="btn-secondary" style="display:block; text-align:center; margin-top:10px;">Annuler</a>{% endif %}
         </form>
