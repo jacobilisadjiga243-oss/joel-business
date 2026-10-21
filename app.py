@@ -6,8 +6,6 @@ import os
 from werkzeug.utils import secure_filename
 import time
 from PIL import Image
-import smtplib
-from email.mime.text import MIMEText
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -15,8 +13,6 @@ db = SQLAlchemy(app)
 
 WHATSAPP_NUMBER = "243992519112"
 ADMIN_PASSWORD = "joel2026"
-EMAIL_EXPEDITEUR = "ton.email@gmail.com"
-EMAIL_MOT_DE_PASSE = "ton_mot_de_passe_application"
 
 class Produit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -101,8 +97,7 @@ def ajouter_avis():
     note = int(request.form.get("note", 5))
     commentaire = request.form.get("commentaire")
     if nom and commentaire:
-        nouvel_avis = Avis(nom=nom, note=note, commentaire=commentaire, approuve=False)
-        db.session.add(nouvel_avis)
+        db.session.add(Avis(nom=nom, note=note, commentaire=commentaire, approuve=False))
         db.session.commit()
         flash("Merci ! Votre avis a bien ete envoye.", "success")
     return redirect(url_for("index") + "#avis")
@@ -128,7 +123,7 @@ def produit_detail(id):
 def panier():
     return render_template("panier.html", whatsapp_number=WHATSAPP_NUMBER)
 
-@app.route("/contact", methods=["GET", "POST"])
+@app.route("/contact")
 def contact():
     info = Parametre.query.first()
     if not info: info = Parametre()
@@ -300,7 +295,6 @@ if not os.path.exists(app.config["UPLOAD_FOLDER"]):
     os.makedirs(app.config["UPLOAD_FOLDER"])
 
 with app.app_context():
-    db.drop_all()  # ⚠️ Reinitialisation propre
     db.create_all()
 
 if __name__ == "__main__":
