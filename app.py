@@ -168,6 +168,18 @@ def admin_dashboard():
                            commandes=Commande.query.all(), 
                            codes_promo=CodePromo.query.all())
 
+@app.route("/admin/changer-couleur", methods=["POST"])
+@login_required
+def admin_changer_couleur():
+    info = Parametre.query.first()
+    if not info:
+        info = Parametre()
+        db.session.add(info)
+    info.couleur_fond = request.form.get("couleur_fond")
+    db.session.commit()
+    flash("Couleur de fond mise a jour !", "success")
+    return redirect(url_for("admin_dashboard"))
+
 @app.route("/admin/ajouter-commande", methods=["POST"])
 @login_required
 def admin_ajouter_commande():
@@ -301,6 +313,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
