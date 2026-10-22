@@ -289,6 +289,7 @@ def admin_infos():
     info.heure_fin = request.form.get("heure_fin")
     info.promo_texte = request.form.get("promo_texte")
     info.promo_active = True if request.form.get("promo_active") else False
+    info.couleur_fond = request.form.get("couleur_fond")
     db.session.commit()
     return redirect(url_for("admin_dashboard"))
 
@@ -300,6 +301,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
