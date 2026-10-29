@@ -35,6 +35,10 @@
         <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison et promo</h3>
         <form method="POST" action="/admin/infos">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="grid-column: 1 / -1;">
+                    <label style="color: #25D366; font-weight: bold;">Numero WhatsApp Business (avec 243)</label>
+                    <input type="text" name="whatsapp" value="{{ info.whatsapp }}" placeholder="Ex: 243992519112" required>
+                </div>
                 <div><label>Ville</label><input type="text" name="ville" value="{{ info.ville }}" required></div>
                 <div><label>Quartier / Zone</label><input type="text" name="quartier" value="{{ info.quartier }}" required></div>
                 <div><label>Frais de livraison</label><input type="text" name="frais" value="{{ info.frais }}" required></div>
@@ -156,5 +160,6 @@
     </div>
 </section>
 {% endblock %}
+
 
 

@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 
-WHATSAPP_NUMBER = "243992519112"
+WHATSAPP_NUMBER = "243992519112" # Valeur par defaut
 ADMIN_PASSWORD = "joel2026"
 
 class Produit(db.Model):
@@ -320,6 +320,7 @@ def admin_infos():
     info.heure_fin = request.form.get("heure_fin")
     info.promo_texte = request.form.get("promo_texte")
     info.promo_active = True if request.form.get("promo_active") else False
+    info.whatsapp = request.form.get("whatsapp")
     db.session.commit()
     flash("Infos mises a jour !", "success")
     return redirect(url_for("admin_dashboard"))
@@ -332,3 +333,4 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
