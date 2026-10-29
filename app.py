@@ -321,6 +321,7 @@ def admin_infos():
     info.promo_texte = request.form.get("promo_texte")
     info.promo_active = True if request.form.get("promo_active") else False
     info.whatsapp = request.form.get("whatsapp")
+    info.whatsapp = request.form.get("whatsapp")
     db.session.commit()
     flash("Infos mises a jour !", "success")
     return redirect(url_for("admin_dashboard"))
@@ -333,4 +334,5 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
