@@ -31,7 +31,7 @@
         <a href="/apropos">A propos</a>
         <a href="/suivi">Suivi</a>
         <a href="/contact">Contact</a>
-        <button onclick="toggleDarkMode()" id="dark-mode-btn" class="dark-btn">🌙</button>
+        
         <a href="/panier" class="cart-btn">Panier (<span id="cart-count">0</span>)</a>
     </nav>
 </header>
@@ -50,6 +50,8 @@
     <p style="margin-bottom: 10px;">2026 Joël Business - Livraison a domicile | Commandes via WhatsApp</p>
     <p style="font-size: 0.8rem;">
         <a href="/mentions" style="color: #aaa; text-decoration: underline;">Mentions Légales</a>
+        | 
+        <a href="#" onclick="toggleDarkMode()" id="dark-mode-btn" style="color: #aaa; text-decoration: underline;">Mode Sombre 🌙</a>
     </p>
 </footer>
 
@@ -78,3 +80,4 @@
 {% block scripts %}{% endblock %}
 </body>
 </html>
+

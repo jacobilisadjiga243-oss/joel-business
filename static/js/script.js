@@ -113,3 +113,57 @@ document.addEventListener("DOMContentLoaded", () => {
     mettreAJourCompteur();
     afficherPanier();
 });
+
+// --- CARROUSEL ---
+document.addEventListener("DOMContentLoaded", () => {
+    const slides = document.querySelectorAll(".slide");
+    const dotsContainer = document.querySelector(".slider-dots");
+    if (slides.length === 0) return;
+
+    let currentSlide = 0;
+    
+    // Créer les points (dots)
+    slides.forEach((_, index) => {
+        const dot = document.createElement("div");
+        dot.classList.add("dot");
+        if (index === 0) dot.classList.add("active");
+        dot.addEventListener("click", () => goToSlide(index));
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll(".dot");
+
+    function goToSlide(index) {
+        slides[currentSlide].classList.remove("active");
+        dots[currentSlide].classList.remove("active");
+        
+        currentSlide = (index + slides.length) % slides.length;
+        
+        slides[currentSlide].classList.add("active");
+        dots[currentSlide].classList.add("active");
+    }
+
+    function nextSlide() {
+        goToSlide(currentSlide + 1);
+    }
+
+    // Défilement automatique toutes les 5 secondes
+    let slideInterval = setInterval(nextSlide, 5000);
+
+    // Boutons manuels
+    const prevBtn = document.querySelector(".slider-btn.prev");
+    const nextBtn = document.querySelector(".slider-btn.next");
+    
+    if (prevBtn && nextBtn) {
+        prevBtn.addEventListener("click", () => {
+            clearInterval(slideInterval);
+            goToSlide(currentSlide - 1);
+            slideInterval = setInterval(nextSlide, 5000);
+        });
+        nextBtn.addEventListener("click", () => {
+            clearInterval(slideInterval);
+            goToSlide(currentSlide + 1);
+            slideInterval = setInterval(nextSlide, 5000);
+        });
+    }
+});
