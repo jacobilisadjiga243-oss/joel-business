@@ -143,6 +143,25 @@ def suivi():
 def mentions():
     return render_template("mentions.html")
 
+@app.route("/promotions")
+def promotions():
+    # On recupere les produits dont la description contient "PROMO"
+    produits_promo = Produit.query.filter(Produit.description.ilike('%PROMO%')).all()
+    return render_template("promotions.html", produits=produits_promo, image_url=image_url)
+
+@app.route("/guide-tailles")
+def guide_tailles():
+    return render_template("guide_tailles.html")
+
+@app.route("/faq")
+def faq():
+    return render_template("faq.html")
+
+@app.route("/nouveautes")
+def page_nouveautes():
+    tous_produits = Produit.query.order_by(Produit.id.desc()).all()
+    return render_template("nouveautes.html", produits=tous_produits[:12], image_url=image_url)
+
 @app.route("/admin", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
@@ -317,6 +336,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
