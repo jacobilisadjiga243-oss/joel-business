@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 
-WHATSAPP_NUMBER = "243992519112" # Valeur par defaut
+WHATSAPP_NUMBER = "243992519112"
 ADMIN_PASSWORD = "joel2026"
 
 class Produit(db.Model):
@@ -33,6 +33,7 @@ class Parametre(db.Model):
     heure_fin = db.Column(db.String(10), default="20:00")
     promo_texte = db.Column(db.String(255), default="PROMO : Livraison offerte des 50$ d'achat !")
     promo_active = db.Column(db.Boolean, default=False)
+    whatsapp = db.Column(db.String(20), default="243992519112")
 
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -270,7 +271,7 @@ def admin_ajouter():
         db.session.commit()
         flash("Produit ajoute !", "success")
     else:
-        flash("Erreur : champs manquants ou image invalide.", "error")
+        flash("Erreur : champs manquants.", "error")
     return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/modifier/<int:id>", methods=["GET", "POST"])
@@ -321,7 +322,6 @@ def admin_infos():
     info.promo_texte = request.form.get("promo_texte")
     info.promo_active = True if request.form.get("promo_active") else False
     info.whatsapp = request.form.get("whatsapp")
-    info.whatsapp = request.form.get("whatsapp")
     db.session.commit()
     flash("Infos mises a jour !", "success")
     return redirect(url_for("admin_dashboard"))
@@ -334,5 +334,3 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
