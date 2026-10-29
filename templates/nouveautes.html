@@ -1,0 +1,17 @@
+﻿{% extends "base.html" %}
+{% block title %}Nouveautes - Joel Business{% endblock %}
+{% block content %}
+<section class="produits-section">
+    <h2>✨ Nos Dernières Nouveautés</h2>
+    <div class="produits-grid">
+        {% for p in produits %}
+        <div class="produit-card">
+            <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}">
+            <h3>{{ p.nom }}</h3>
+            <p class="prix">{{ p.prix }} {{ p.devise }}</p>
+            <a href="/produit/{{ p.id }}" class="btn-secondary">Voir detail</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

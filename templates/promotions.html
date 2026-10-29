@@ -1,0 +1,20 @@
+﻿{% extends "base.html" %}
+{% block title %}Promotions - Joel Business{% endblock %}
+{% block content %}
+<section class="produits-section">
+    <h2>🔥 Nos Promotions</h2>
+    <div class="produits-grid">
+        {% for p in produits %}
+        <div class="produit-card">
+            <img src="{{ image_url(p.image) }}" alt="{{ p.nom }}">
+            <h3>{{ p.nom }}</h3>
+            <p class="prix" style="text-decoration: line-through; color: #999; font-size: 1rem;">{{ p.prix + 1000 }} {{ p.devise }}</p>
+            <p class="prix">{{ p.prix }} {{ p.devise }}</p>
+            <a href="/produit/{{ p.id }}" class="btn-secondary">Voir detail</a>
+        </div>
+        {% else %}
+        <p style="text-align: center; width: 100%;">Aucune promotion en cours.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
