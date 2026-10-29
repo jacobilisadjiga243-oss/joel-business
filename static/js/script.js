@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Défilement automatique toutes les 5 secondes
-    let slideInterval = setInterval(nextSlide, 5000);
+    let slideInterval = setInterval(nextSlide, 10000);
 
     // Boutons manuels
     const prevBtn = document.querySelector(".slider-btn.prev");
@@ -158,12 +158,13 @@ document.addEventListener("DOMContentLoaded", () => {
         prevBtn.addEventListener("click", () => {
             clearInterval(slideInterval);
             goToSlide(currentSlide - 1);
-            slideInterval = setInterval(nextSlide, 5000);
+            slideInterval = setInterval(nextSlide, 10000);
         });
         nextBtn.addEventListener("click", () => {
             clearInterval(slideInterval);
             goToSlide(currentSlide + 1);
-            slideInterval = setInterval(nextSlide, 5000);
+            slideInterval = setInterval(nextSlide, 10000);
         });
     }
 });
+
