@@ -139,6 +139,10 @@ def suivi():
         commande = Commande.query.filter_by(telephone=telephone, reference=reference).first()
     return render_template("suivi.html", commande=commande)
 
+@app.route("/mentions")
+def mentions():
+    return render_template("mentions.html")
+
 @app.route("/admin", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
@@ -313,6 +317,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
