@@ -30,6 +30,31 @@
         </form>
     </div>
 
+        <!-- BLOC INFOS LIVRAISON ET PROMO -->
+    <div class="contact-form-box" style="margin-bottom: 30px; background: #f0f8ff;">
+        <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison et promo</h3>
+        <form method="POST" action="/admin/infos">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div><label>Ville</label><input type="text" name="ville" value="{{ info.ville }}" required></div>
+                <div><label>Quartier / Zone</label><input type="text" name="quartier" value="{{ info.quartier }}" required></div>
+                <div><label>Frais de livraison</label><input type="text" name="frais" value="{{ info.frais }}" required></div>
+                <div><label>Delai</label><input type="text" name="delai" value="{{ info.delai }}" required></div>
+                <div><label>Heure ouverture</label><input type="time" name="heure_debut" value="{{ info.heure_debut }}" required></div>
+                <div><label>Heure fermeture</label><input type="time" name="heure_fin" value="{{ info.heure_fin }}" required></div>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Bandeau Promo (Texte)</label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px;">
+                    <input type="checkbox" name="promo_active" value="1" {% if info.promo_active %}checked{% endif %} style="width: 20px; height: 20px;">
+                    <span>Afficher le bandeau promo sur l'accueil</span>
+                </label>
+                <input type="text" name="promo_texte" value="{{ info.promo_texte }}" placeholder="Texte de la promo" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+
+            <button type="submit" class="btn-secondary" style="background: #1976d2; margin-top: 15px; width: 100%;">Enregistrer les infos</button>
+        </form>
+    </div>
     <!-- BLOC PRODUITS -->
     <div class="contact-form-box" style="margin-bottom: 30px;">
         <h3 style="margin-bottom: 15px;">{% if edit %}Modifier le produit{% else %}Ajouter un produit{% endif %}</h3>
@@ -131,4 +156,5 @@
     </div>
 </section>
 {% endblock %}
+
 
