@@ -25,9 +25,9 @@ class Produit(db.Model):
 
 class Parametre(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ville = db.Column(db.String(100), default="Gbadolite / Mobayi-Mbongo")
-    quartier = db.Column(db.String(100), default="A preciser")
-    frais = db.Column(db.String(100), default="A confirmer selon la zone")
+    ville = db.Column(db.String(100), default="Nord-Ubangi")
+    quartier = db.Column(db.String(100), default="Toute la zone")
+    frais = db.Column(db.String(100), default="5000 FC (Gbadolite) / 12000 FC (Mobayi)")
     delai = db.Column(db.String(100), default="24 a 48h")
     heure_debut = db.Column(db.String(10), default="08:00")
     heure_fin = db.Column(db.String(10), default="20:00")
@@ -66,9 +66,8 @@ class CodePromo(db.Model):
 
 def image_url(image):
     if not image: return ""
-    if image.startswith("http"): 
-        return image.strip()
-    return "/static/images/" + image.strip()
+    if image.startswith("http"): return image
+    return "/static/images/" + image
 
 def login_required(f):
     @wraps(f)
@@ -78,6 +77,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# --- ROUTES PUBLIQUES ---
 @app.route("/")
 def index():
     tous_produits = Produit.query.order_by(Produit.id.desc()).all()
@@ -91,6 +91,24 @@ def index():
 @app.route("/apropos")
 def apropos():
     return render_template("apropos.html")
+
+@app.route("/promotions")
+def promotions():
+    produits_promo = Produit.query.filter(Produit.description.ilike('%PROMO%')).all()
+    return render_template("promotions.html", produits=produits_promo, image_url=image_url)
+
+@app.route("/guide-tailles")
+def guide_tailles():
+    return render_template("guide_tailles.html")
+
+@app.route("/faq")
+def faq():
+    return render_template("faq.html")
+
+@app.route("/nouveautes")
+def page_nouveautes():
+    tous_produits = Produit.query.order_by(Produit.id.desc()).all()
+    return render_template("nouveautes.html", produits=tous_produits[:12], image_url=image_url)
 
 @app.route("/ajouter-avis", methods=["POST"])
 def ajouter_avis():
@@ -124,7 +142,7 @@ def produit_detail(id):
 def panier():
     return render_template("panier.html", whatsapp_number=WHATSAPP_NUMBER)
 
-@app.route("/contact", methods=["GET", "POST"])
+@app.route("/contact")
 def contact():
     info = Parametre.query.first()
     if not info: info = Parametre()
@@ -143,25 +161,7 @@ def suivi():
 def mentions():
     return render_template("mentions.html")
 
-@app.route("/promotions")
-def promotions():
-    # On recupere les produits dont la description contient "PROMO"
-    produits_promo = Produit.query.filter(Produit.description.ilike('%PROMO%')).all()
-    return render_template("promotions.html", produits=produits_promo, image_url=image_url)
-
-@app.route("/guide-tailles")
-def guide_tailles():
-    return render_template("guide_tailles.html")
-
-@app.route("/faq")
-def faq():
-    return render_template("faq.html")
-
-@app.route("/nouveautes")
-def page_nouveautes():
-    tous_produits = Produit.query.order_by(Produit.id.desc()).all()
-    return render_template("nouveautes.html", produits=tous_produits[:12], image_url=image_url)
-
+# --- ROUTES ADMIN ---
 @app.route("/admin", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
@@ -190,18 +190,6 @@ def admin_dashboard():
                            avis_approuves=Avis.query.filter_by(approuve=True).all(), 
                            commandes=Commande.query.all(), 
                            codes_promo=CodePromo.query.all())
-
-@app.route("/admin/changer-couleur", methods=["POST"])
-@login_required
-def admin_changer_couleur():
-    info = Parametre.query.first()
-    if not info:
-        info = Parametre()
-        db.session.add(info)
-    info.couleur_fond = request.form.get("couleur_fond")
-    db.session.commit()
-    flash("Couleur de fond mise a jour !", "success")
-    return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/ajouter-commande", methods=["POST"])
 @login_required
@@ -280,6 +268,9 @@ def admin_ajouter():
     if nom and prix and categorie and nom_image:
         db.session.add(Produit(nom=nom, prix=int(prix), devise=devise, categorie=categorie.lower(), image=nom_image, description=description))
         db.session.commit()
+        flash("Produit ajoute !", "success")
+    else:
+        flash("Erreur : champs manquants ou image invalide.", "error")
     return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/modifier/<int:id>", methods=["GET", "POST"])
@@ -292,7 +283,11 @@ def admin_modifier(id):
         produit.devise = request.form.get("devise", "$")
         produit.categorie = request.form.get("categorie").lower()
         produit.description = request.form.get("description")
+        image_url_input = request.form.get("image_url")
+        if image_url_input:
+            produit.image = image_url_input
         db.session.commit()
+        flash("Produit modifie !", "success")
         return redirect(url_for("admin_dashboard"))
     info = Parametre.query.first()
     return render_template("admin_dashboard.html", produits=Produit.query.all(), image_url=image_url, edit=produit, info=info,
@@ -307,6 +302,7 @@ def admin_supprimer(id):
     produit = Produit.query.get_or_404(id)
     db.session.delete(produit)
     db.session.commit()
+    flash("Produit supprime.", "success")
     return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/infos", methods=["POST"])
@@ -324,8 +320,8 @@ def admin_infos():
     info.heure_fin = request.form.get("heure_fin")
     info.promo_texte = request.form.get("promo_texte")
     info.promo_active = True if request.form.get("promo_active") else False
-    info.couleur_fond = request.form.get("couleur_fond")
     db.session.commit()
+    flash("Infos mises a jour !", "success")
     return redirect(url_for("admin_dashboard"))
 
 if not os.path.exists(app.config["UPLOAD_FOLDER"]):
@@ -336,12 +332,3 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
-
-
-
-
-
