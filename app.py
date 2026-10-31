@@ -356,6 +356,7 @@ def admin_infos():
     info.heure_fin = request.form.get("heure_fin")
     info.promo_texte = request.form.get("promo_texte")
     info.promo_active = True if request.form.get("promo_active") else False
+    info.video_url = request.form.get("video_url")
     info.whatsapp = request.form.get("whatsapp")
     db.session.commit()
     flash("Infos mises a jour !", "success")
@@ -369,6 +370,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 

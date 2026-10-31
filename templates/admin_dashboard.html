@@ -16,12 +16,10 @@
 
 {% block content %}
 <section class="produits-section" style="padding-top: 20px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-        <h2>Gestion du site</h2>
-        <div>
-            <a href="/admin/transactions" class="btn-secondary" style="background: #6a1b9a;">💳 Transactions</a>
-            <a href="/admin/logout" class="btn-secondary" style="background: #d32f2f; margin-left: 5px;">Deconnexion</a>
-        </div>
+    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; gap: 10px;">
+        <a href="/" target="_blank" class="btn-secondary" style="background: #25D366; padding: 10px 20px; font-size: 1rem;">🌐 Voir mon site</a>
+        <a href="/admin/transactions" class="btn-secondary" style="background: #6a1b9a; padding: 10px 20px; font-size: 1rem;">💳 Transactions</a>
+        <a href="/admin/logout" class="btn-secondary" style="background: #d32f2f; padding: 10px 20px; font-size: 1rem;">Deconnexion</a>
     </div>
 
     {% with messages = get_flashed_messages() %}
@@ -56,6 +54,10 @@
                 <div><label>Quartier / Zone</label><input type="text" name="quartier" value="{{ info.quartier }}" required></div>
                 <div><label>Frais de livraison</label><input type="text" name="frais" value="{{ info.frais }}" required></div>
                 <div><label>Delai</label><input type="text" name="delai" value="{{ info.delai }}" required></div>
+                <div style="grid-column: 1 / -1;">
+                    <label>Lien Video YouTube (Optionnel)</label>
+                    <input type="text" name="video_url" value="{{ info.video_url or '' }}" placeholder="Ex: https://www.youtube.com/embed/XXXXXX">
+                </div>
                 <div><label>Heure ouverture</label><input type="time" name="heure_debut" value="{{ info.heure_debut }}" required></div>
                 <div><label>Heure fermeture</label><input type="time" name="heure_fin" value="{{ info.heure_fin }}" required></div>
             </div>
@@ -185,8 +187,6 @@
             <p style="font-size: 0.8rem; color: #666;">Cat: {{ p.categorie }}</p>
             <div style="display:flex; gap:5px; justify-content:center; margin-top:5px;">
                 <a href="/produit/{{ p.id }}" class="btn-secondary" style="background: #25D366;" target="_blank">Voir</a>
-                <a href="/produit/{{ p.id }}" class="btn-secondary" style="background: #25D366;" target="_blank">Voir</a>
-                <a href="/produit/{{ p.id }}" class="btn-secondary" style="background: #25D366;" target="_blank">Voir</a>
                 <a href="/admin/modifier/{{ p.id }}" class="btn-secondary" style="background: #1976d2;">Modifier</a>
                 <a href="/admin/supprimer/{{ p.id }}" class="btn-secondary" style="background: #d32f2f;" onclick="return confirm('Supprimer ?')">Suppr</a>
             </div>
@@ -208,6 +208,7 @@
         }
     </script>
 {% endblock %}
+
 
 
 
