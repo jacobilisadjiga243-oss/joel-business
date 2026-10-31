@@ -355,3 +355,43 @@ footer { text-align: center; padding: 30px; background: #111; color: #888; margi
     font-weight: 600;
     letter-spacing: 0.5px;
 }
+
+/* --- AMELIORATION POUR MOBILE --- */
+@media (max-width: 768px) {
+    /* Le menu passe en mode defilant horizontalement pour ne pas prendre 10 lignes */
+    .main-nav {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 10px;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+    }
+    .main-nav a {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+        background: #222;
+        border-radius: 15px;
+    }
+    .main-nav::-webkit-scrollbar { display: none; }
+
+    /* Les produits s'affichent en 2 colonnes sur telephone */
+    .produits-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .produit-card img {
+        height: 180px;
+    }
+    .produit-card h3 {
+        font-size: 0.9rem;
+    }
+    .prix {
+        font-size: 1rem;
+    }
+
+    /* Admin : les blocs prennent toute la largeur */
+    .contact-form-box[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+    }
+}
