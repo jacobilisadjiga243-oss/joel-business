@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Joel Business - Boutique en ligne{% endblock %}</title>
+    <title>{% block title %}Joel Business{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Icônes Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body>
 
@@ -15,35 +17,33 @@
         <a href="/" class="logo-text">Joël Business</a>
     </div>
     
-    <form action="/produits" method="GET" class="search-form">
-        <input type="text" name="q" placeholder="Rechercher..." value="{{ request.args.get('q', '') }}">
-        <button type="submit">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
-        </button>
-    </form>
+    <div class="nav-actions">
+        <form action="/produits" method="GET" class="search-form">
+            <input type="text" name="q" placeholder="{{ t.rechercher }}" value="{{ request.args.get('q', '') }}">
+            <button type="submit"><i class="bi bi-search"></i></button>
+        </form>
 
-    <nav>
-        <a href="/">Accueil</a>
-        <a href="/produits">Tout voir</a>
-        <a href="/produits?categorie=femme">Femme</a>
-        <a href="/produits?categorie=homme">Homme</a>
-        <a href="/produits?categorie=valise">Valises</a>
-        <a href="/apropos">A propos</a>
-        <a href="/suivi">Suivi</a>
-        <a href="/nouveautes">Nouveautes</a>
-        <a href="/promotions" style="color: #ffcc00;">Promos</a>
-        <a href="/guide-tailles">Tailles</a>
-        <a href="/faq">FAQ</a>
-        <a href="/contact">Contact</a>
-        
-        <a href="/panier" class="cart-btn">Panier (<span id="cart-count">0</span>)</a>
+        <div class="lang-switcher">
+            <a href="/changer-langue/fr" class="{% if current_lang == 'fr' %}active-lang{% endif %}">FR</a>
+            <a href="/changer-langue/en" class="{% if current_lang == 'en' %}active-lang{% endif %}">EN</a>
+            <a href="/changer-langue/ln" class="{% if current_lang == 'ln' %}active-lang{% endif %}">LN</a>
+        </div>
+    </div>
+
+    <nav class="main-nav">
+        <a href="/"><i class="bi bi-house-door"></i> {{ t.accueil }}</a>
+        <a href="/produits"><i class="bi bi-grid"></i> {{ t.tout_voir }}</a>
+        <a href="/produits?categorie=femme"><i class="bi bi-person-standing-dress"></i> {{ t.femme }}</a>
+        <a href="/produits?categorie=homme"><i class="bi bi-person-standing"></i> {{ t.homme }}</a>
+        <a href="/produits?categorie=valise"><i class="bi bi-briefcase"></i> {{ t.valises }}</a>
+        <a href="/promotions" style="color: #ffcc00;"><i class="bi bi-fire"></i> Promos</a>
+        <a href="/contact"><i class="bi bi-envelope"></i> {{ t.contact }}</a>
+        <a href="/panier" class="cart-btn"><i class="bi bi-cart3"></i> {{ t.panier }} (<span id="cart-count">0</span>)</a>
     </nav>
 </header>
 
 <div class="bandeau-defilant">
-    <div class="defilant-texte">
-        🚚 Livraison dans toute la zone du Nord-Ubangi (Gbadolite, Mobayi-Mbongo...) | Commandez via WhatsApp | Livraison rapide et sécurisée 🚚|🚚 Livraison dans toute la zone du Nord-Ubangi (Gbadolite, Mobayi-Mbongo...) | Commandez via WhatsApp | Livraison rapide et sécurisée 🚚|🚚 Livraison dans toute la zone du Nord-Ubangi (Gbadolite, Mobayi-Mbongo...) | Commandez via WhatsApp | Livraison rapide et sécurisée 🚚
-    </div>
+    <div class="defilant-texte">🚚 {{ t.livraison }} 🚚</div>
 </div>
 
 <main>
@@ -59,8 +59,8 @@
     </p>
 </footer>
 
-<a href="https://wa.me/243992519112?text=Bonjour%20Joel%20Business%2C%20je%20suis%20interesse%20par%20vos%20produits." target="_blank" class="whatsapp-float">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="30" height="30" fill="white"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+<a href="https://wa.me/243992519112?text=Bonjour%20Joel%20Business" target="_blank" class="whatsapp-float">
+    <i class="bi bi-whatsapp" style="font-size: 30px; color: white;"></i>
 </a>
 
 <script>
@@ -68,24 +68,19 @@
         document.body.classList.toggle('dark-mode');
         const btn = document.getElementById('dark-mode-btn');
         if(document.body.classList.contains('dark-mode')) {
-            btn.innerHTML = '☀️';
+            btn.innerHTML = 'Mode Clair ☀️';
             localStorage.setItem('darkMode', 'enabled');
         } else {
-            btn.innerHTML = '🌙';
+            btn.innerHTML = 'Mode Sombre 🌙';
             localStorage.setItem('darkMode', 'disabled');
         }
     }
     if(localStorage.getItem('darkMode') === 'enabled') {
         document.body.classList.add('dark-mode');
-        document.getElementById('dark-mode-btn').innerHTML = '☀️';
+        document.getElementById('dark-mode-btn').innerHTML = 'Mode Clair ☀️';
     }
 </script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>
-
-
-
-
-

@@ -20,6 +20,48 @@ def get_admin_password():
 
 ADMIN_PASSWORD = get_admin_password()
 
+# --- TRADUCTIONS ---
+TRADUCTIONS = {
+    "fr": {
+        "accueil": "Accueil", "tout_voir": "Tout voir", "femme": "Femme", "homme": "Homme",
+        "valises": "Valises", "autres": "Autres", "apropos": "À propos", "suivi": "Suivi",
+        "contact": "Contact", "panier": "Panier", "rechercher": "Rechercher...",
+        "livraison": "Livraison dans toute la zone du Nord-Ubangi | Commandez via WhatsApp",
+        "hero_titre": "La Mode et bien plus encore", "hero_texte": "Habits, valises, chaussures, sacs et bien d'autres articles.",
+        "voir_boutique": "Voir toute la boutique"
+    },
+    "en": {
+        "accueil": "Home", "tout_voir": "See all", "femme": "Women", "homme": "Men",
+        "valises": "Suitcases", "autres": "Others", "apropos": "About", "suivi": "Tracking",
+        "contact": "Contact", "panier": "Cart", "rechercher": "Search...",
+        "livraison": "Delivery everywhere in Nord-Ubangi | Order via WhatsApp",
+        "hero_titre": "Fashion and much more", "hero_texte": "Clothes, suitcases, shoes, bags and much more.",
+        "voir_boutique": "View the shop"
+    },
+    "ln": {
+        "accueil": "Ndako", "tout_voir": "Tala nyoso", "femme": "Mwayi", "homme": "Mobali",
+        "valises": "Valise", "autres": "Misusu", "apropos": "Na biso", "suivi": "Kolanda",
+        "contact": "Kosunga", "panier": "Panier", "rechercher": "Luka...",
+        "livraison": "Livraison na Nord-Ubangi mobimba | Tinda na WhatsApp",
+        "hero_titre": "Bilamba mpe mosusu", "hero_texte": "Bilamba, valise, sapato, saki mpe mosusu.",
+        "voir_boutique": "Tala magazini"
+    }
+}
+
+def get_lang():
+    return session.get('lang', 'fr')
+
+@app.context_processor
+def inject_lang():
+    lang = get_lang()
+    return dict(t=TRADUCTIONS[lang], current_lang=lang)
+
+@app.route("/changer-langue/<lang>")
+def changer_langue(lang):
+    if lang in TRADUCTIONS:
+        session['lang'] = lang
+    return redirect(request.referrer or url_for('index'))()
+
 class Produit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
@@ -352,6 +394,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
