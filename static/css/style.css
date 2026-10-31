@@ -395,3 +395,70 @@ footer { text-align: center; padding: 30px; background: #111; color: #888; margi
         grid-template-columns: 1fr !important;
     }
 }
+
+/* --- AMELIORATION DE L'ENTETE SUR MOBILE --- */
+@media (max-width: 768px) {
+    /* Le menu défile horizontalement au lieu de prendre 3 lignes */
+    .main-nav {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        justify-content: flex-start;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .main-nav a {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        background: #222;
+        border-radius: 15px;
+        margin-right: 5px;
+    }
+    .main-nav::-webkit-scrollbar {
+        display: none; /* Cache la barre de défilement */
+    }
+
+    /* La recherche prend toute la largeur mais reste compacte */
+    .search-form {
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto;
+    }
+    
+    /* Le logo reste bien centré */
+    .logo {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* --- AMELIORATION DE L'ENTETE SUR MOBILE --- */
+@media (max-width: 768px) {
+    .main-nav {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        justify-content: flex-start;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .main-nav a {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        background: #222;
+        border-radius: 15px;
+        margin-right: 5px;
+    }
+    .main-nav::-webkit-scrollbar {
+        display: none;
+    }
+    .search-form {
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto;
+    }
+    .logo {
+        width: 100%;
+        justify-content: center;
+    }
+}
