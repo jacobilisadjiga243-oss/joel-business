@@ -12,7 +12,13 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 
 WHATSAPP_NUMBER = "243992519112"
-ADMIN_PASSWORD = "joel2026"
+def get_admin_password():
+    if os.path.exists("password.txt"):
+        with open("password.txt", "r") as f:
+            return f.read().strip()
+    return "joel2026"
+
+ADMIN_PASSWORD = get_admin_password()
 
 class Produit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -192,6 +198,18 @@ def admin_dashboard():
                            commandes=Commande.query.all(), 
                            codes_promo=CodePromo.query.all())
 
+@app.route("/admin/changer-mdp", methods=["POST"])
+@login_required
+def admin_changer_mdp():
+    nouveau_mdp = request.form.get("nouveau_mdp")
+    if nouveau_mdp and len(nouveau_mdp) >= 4:
+        with open("password.txt", "w") as f:
+            f.write(nouveau_mdp)
+        flash("Mot de passe change avec succes !", "success")
+    else:
+        flash("Erreur : Le mot de passe doit faire au moins 4 caracteres.", "error")
+    return redirect(url_for("admin_dashboard"))
+
 @app.route("/admin/ajouter-commande", methods=["POST"])
 @login_required
 def admin_ajouter_commande():
@@ -334,4 +352,5 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 

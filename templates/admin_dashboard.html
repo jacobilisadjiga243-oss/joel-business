@@ -144,6 +144,15 @@
     </div>
 
     <!-- LISTE DES PRODUITS -->
+    <div class="contact-form-box" style="margin-bottom: 30px; background: #e8f5e9;">
+        <h3 style="margin-bottom: 15px; color: #2e7d32;">🔐 Changer le mot de passe Admin</h3>
+        <form method="POST" action="/admin/changer-mdp">
+            <label>Nouveau mot de passe</label>
+            <input type="password" name="nouveau_mdp" required minlength="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+            <button type="submit" class="btn-secondary" style="background: #2e7d32; margin-top: 10px; width: 100%;">Changer le mot de passe</button>
+        </form>
+    </div>
+
     <h3>Produits en ligne</h3>
     <div class="produits-grid" style="margin-top: 15px;">
         {% for p in produits %}
@@ -152,6 +161,7 @@
             <h3 style="font-size: 1rem;">{{ p.nom }} ({{ p.prix }} {{ p.devise }})</h3>
             <p style="font-size: 0.8rem; color: #666;">Cat: {{ p.categorie }}</p>
             <div style="display:flex; gap:5px; justify-content:center; margin-top:5px;">
+                <a href="/produit/{{ p.id }}" class="btn-secondary" style="background: #25D366;" target="_blank">Voir</a>
                 <a href="/admin/modifier/{{ p.id }}" class="btn-secondary" style="background: #1976d2;">Modifier</a>
                 <a href="/admin/supprimer/{{ p.id }}" class="btn-secondary" style="background: #d32f2f;" onclick="return confirm('Supprimer ?')">Suppr</a>
             </div>
@@ -160,6 +170,7 @@
     </div>
 </section>
 {% endblock %}
+
 
 
 
