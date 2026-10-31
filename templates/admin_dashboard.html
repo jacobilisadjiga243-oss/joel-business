@@ -4,7 +4,7 @@
 {% block content %}
 <section class="produits-section" style="padding-top: 20px; max-width: 1000px; margin: auto;">
 
-    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; gap: 10px;">
+    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap;">
         <a href="/" target="_blank" class="btn-secondary" style="background: #25D366; padding: 10px 20px;">🌐 Voir mon site</a>
         <a href="/admin/transactions" class="btn-secondary" style="background: #6a1b9a; padding: 10px 20px;">💳 Transactions</a>
         <a href="/admin/logout" class="btn-secondary" style="background: #d32f2f; padding: 10px 20px;">Deconnexion</a>
@@ -14,12 +14,23 @@
       {% if messages %}<p style="color: green; font-weight: bold; margin-bottom: 15px; background: #e8f5e9; padding: 10px; border-radius: 8px;">{{ messages[0] }}</p>{% endif %}
     {% endwith %}
 
-    
+    <!-- BLOC 1 : INFOS LIVRAISON -->
+    <div class="contact-form-box" style="margin-bottom: 30px; background: #f0f8ff;">
+        <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison</h3>
+        <form method="POST" action="/admin/infos">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div><label>Ville</label><input type="text" name="ville" value="{{ info.ville }}" required></div>
+                <div><label>Quartier / Zone</label><input type="text" name="quartier" value="{{ info.quartier }}" required></div>
+                <div><label>Frais de livraison</label><input type="text" name="frais" value="{{ info.frais }}" required></div>
+                <div><label>Delai</label><input type="text" name="delai" value="{{ info.delai }}" required></div>
+                <div><label>Heure ouverture</label><input type="time" name="heure_debut" value="{{ info.heure_debut }}" required></div>
+                <div><label>Heure fermeture</label><input type="time" name="heure_fin" value="{{ info.heure_fin }}" required></div>
+            </div>
             <button type="submit" class="btn-secondary" style="background: #1976d2; margin-top: 15px; width: 100%;">Enregistrer les infos de livraison</button>
         </form>
     </div>
 
-    <!-- BLOC 3 : PROMO -->
+    <!-- BLOC 2 : PROMO -->
     <div class="contact-form-box" style="margin-bottom: 30px; background: #fff3e0;">
         <h3 style="margin-bottom: 15px; color: #e65100;">🔥 Bandeau Promo</h3>
         <form method="POST" action="/admin/promo">
@@ -32,7 +43,7 @@
         </form>
     </div>
 
-    <!-- BLOC 4 : VIDEO -->
+    <!-- BLOC 3 : VIDEO -->
     <div class="contact-form-box" style="margin-bottom: 30px; background: #e8f5e9;">
         <h3 style="margin-bottom: 15px; color: #2e7d32;">📺 Vidéo de présentation (Optionnel)</h3>
         <form method="POST" action="/admin/video">
@@ -44,6 +55,24 @@
                 <a href="/admin/supprimer-video" class="btn-secondary" style="background: #d32f2f; flex: 1; text-align: center;" onclick="return confirm('Supprimer la vidéo ?')">Supprimer</a>
                 {% endif %}
             </div>
+        </form>
+    </div>
+
+    <!-- BLOC 4 : CHANGER MOT DE PASSE -->
+    <div class="contact-form-box" style="margin-bottom: 30px; background: #fce4ec;">
+        <h3 style="margin-bottom: 15px; color: #c2185b;">🔐 Changer le mot de passe Admin</h3>
+        <form method="POST" action="/admin/changer-mdp">
+            <label>Nouveau mot de passe</label>
+            <div style="position: relative; margin-bottom: 10px;">
+                <input type="password" name="nouveau_mdp" id="mdp1" required minlength="4" style="width: 100%; padding: 10px; padding-right: 40px; border: 1px solid #ddd; border-radius: 8px;">
+                <span onclick="toggleMdp('mdp1', 'eye1')" id="eye1" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">👁️</span>
+            </div>
+            <label>Confirmer le mot de passe</label>
+            <div style="position: relative; margin-bottom: 15px;">
+                <input type="password" name="confirmation_mdp" id="mdp2" required minlength="4" style="width: 100%; padding: 10px; padding-right: 40px; border: 1px solid #ddd; border-radius: 8px;">
+                <span onclick="toggleMdp('mdp2', 'eye2')" id="eye2" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">👁️</span>
+            </div>
+            <button type="submit" class="btn-secondary" style="background: #c2185b; width: 100%;">Changer le mot de passe</button>
         </form>
     </div>
 
@@ -139,6 +168,18 @@
         {% endfor %}
     </div>
 </section>
+
+<script>
+    function toggleMdp(inputId, eyeId) {
+        const input = document.getElementById(inputId);
+        const eye = document.getElementById(eyeId);
+        if (input.type === "password") {
+            input.type = "text";
+            eye.innerHTML = "🙈";
+        } else {
+            input.type = "password";
+            eye.innerHTML = "👁️";
+        }
+    }
+</script>
 {% endblock %}
-
-
