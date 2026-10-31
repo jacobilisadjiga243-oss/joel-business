@@ -6,10 +6,10 @@
 <div class="bandeau-promo">🔥 {{ info.promo_texte }}</div>
 {% endif %}
 
-<!-- CARROUSEL -->
+<!-- CARROUSEL PROPRE -->
 <div class="slider-container">
     <div class="slider">
-        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=600&fit=crop');">
+        <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=600&fit=crop');">
             <div class="slide-content">
                 <h1>La Mode à Portée de Clic</h1>
                 <p>Découvrez nos nouvelles collections.</p>
@@ -21,6 +21,27 @@
                 <h1>Élégance & Style</h1>
                 <p>Des tenues pour toutes les occasions.</p>
                 <a href="/produits?categorie=femme" class="btn-primary">Collection Femme</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&h=600&fit=crop');">
+            <div class="slide-content">
+                <h1>Pour Homme</h1>
+                <p>Des classiques intemporels.</p>
+                <a href="/produits?categorie=homme" class="btn-primary">Collection Homme</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&h=600&fit=crop');">
+            <div class="slide-content">
+                <h1>Voyagez avec Style</h1>
+                <p>Valises et sacs de qualité.</p>
+                <a href="/produits?categorie=valise" class="btn-primary">Voir les Valises</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1549298916-b41d501d3772?w=1200&h=600&fit=crop');">
+            <div class="slide-content">
+                <h1>Chaussures & Accessoires</h1>
+                <p>Complétez votre look.</p>
+                <a href="/produits?categorie=autres" class="btn-primary">Découvrir</a>
             </div>
         </div>
     </div>
@@ -135,3 +156,4 @@
     </div>
 </section>
 {% endblock %}
+
