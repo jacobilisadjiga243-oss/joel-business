@@ -66,7 +66,7 @@
     </div>
     <!-- BLOC INFOS LIVRAISON -->
     <div class="contact-form-box" style="margin-bottom: 30px; background: #f0f8ff;">
-        <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison et promo</h3>
+        <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison</h3>
         <form method="POST" action="/admin/infos">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div><label>Ville</label><input type="text" name="ville" value="{{ info.ville }}" required></div>
@@ -76,6 +76,22 @@
                 <div><label>Heure ouverture</label><input type="time" name="heure_debut" value="{{ info.heure_debut }}" required></div>
                 <div><label>Heure fermeture</label><input type="time" name="heure_fin" value="{{ info.heure_fin }}" required></div>
             </div>
+            <button type="submit" class="btn-secondary" style="background: #1976d2; margin-top: 15px; width: 100%;">Enregistrer les infos de livraison</button>
+        </form>
+    </div>
+
+    <!-- BLOC PROMO -->
+    <div class="contact-form-box" style="margin-bottom: 30px; background: #fff3e0;">
+        <h3 style="margin-bottom: 15px; color: #e65100;">🔥 Bandeau Promo</h3>
+        <form method="POST" action="/admin/promo">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px;">
+                <input type="checkbox" name="promo_active" value="1" {% if info.promo_active %}checked{% endif %} style="width: 20px; height: 20px;">
+                <span>Afficher le bandeau promo sur l'accueil</span>
+            </label>
+            <input type="text" name="promo_texte" value="{{ info.promo_texte }}" placeholder="Texte de la promo" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px;">
+            <button type="submit" class="btn-secondary" style="background: #e65100; width: 100%;">Enregistrer la promo</button>
+        </form>
+    </div>
             
             <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
                 <label style="font-weight: bold; margin-bottom: 5px; display: block;">Bandeau Promo</label>
@@ -223,6 +239,7 @@
         }
     </script>
 {% endblock %}
+
 
 
 

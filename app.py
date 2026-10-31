@@ -363,6 +363,19 @@ def admin_supprimer_video():
         flash("Video supprimee !", "success")
     return redirect(url_for("admin_dashboard"))
 
+@app.route("/admin/promo", methods=["POST"])
+@login_required
+def admin_promo():
+    info = Parametre.query.first()
+    if not info:
+        info = Parametre()
+        db.session.add(info)
+    info.promo_texte = request.form.get("promo_texte")
+    info.promo_active = True if request.form.get("promo_active") else False
+    db.session.commit()
+    flash("Bandeau promo mis a jour !", "success")
+    return redirect(url_for("admin_dashboard"))
+
 @app.route("/admin/infos", methods=["POST"])
 @login_required
 def admin_infos():
@@ -392,6 +405,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
