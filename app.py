@@ -51,10 +51,7 @@ TRADUCTIONS = {
 def get_lang():
     return session.get('lang', 'fr')
 
-@app.context_processor
-def inject_lang():
-    lang = get_lang()
-    return dict(t=TRADUCTIONS[lang], current_lang=lang)
+
 
 @app.route("/changer-langue/<lang>")
 def changer_langue(lang):
@@ -117,6 +114,21 @@ def image_url(image):
     if not image: return ""
     if image.startswith("http"): return image
     return "/static/images/" + image
+
+@app.context_processor
+def inject_globals():
+    lang = session.get("lang", "fr")
+    if lang not in TRADUCTIONS: lang = "fr"
+    
+    info = Parametre.query.first()
+    if not info:
+        info = Parametre()
+        try:
+            db.session.add(info)
+            db.session.commit()
+        except: pass
+        
+    return dict(t=TRADUCTIONS[lang], current_lang=lang, info=info)
 
 def login_required(f):
     @wraps(f)
@@ -394,6 +406,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
