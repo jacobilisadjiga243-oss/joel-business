@@ -185,6 +185,7 @@
             <p style="font-size: 0.8rem; color: #666;">Cat: {{ p.categorie }}</p>
             <div style="display:flex; gap:5px; justify-content:center; margin-top:5px;">
                 <a href="/produit/{{ p.id }}" class="btn-secondary" style="background: #25D366;" target="_blank">Voir</a>
+                <a href="/produit/{{ p.id }}" class="btn-secondary" style="background: #25D366;" target="_blank">Voir</a>
                 <a href="/admin/modifier/{{ p.id }}" class="btn-secondary" style="background: #1976d2;">Modifier</a>
                 <a href="/admin/supprimer/{{ p.id }}" class="btn-secondary" style="background: #d32f2f;" onclick="return confirm('Supprimer ?')">Suppr</a>
             </div>
@@ -206,6 +207,7 @@
         }
     </script>
 {% endblock %}
+
 
 
 
