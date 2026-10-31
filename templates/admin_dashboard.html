@@ -41,29 +41,44 @@
         </form>
     </div>
 
-        <!-- BLOC INFOS LIVRAISON ET PROMO -->
+        
+            
+            <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Bandeau Promo (Texte)</label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px;">
+                    <input type="checkbox" name="promo_active" value="1" {% if info.promo_active %}checked{% endif %} style="width: 20px; height: 20px;">
+                    <span>Afficher le bandeau promo sur l'accueil</span>
+                </label>
+                <input type="text" name="promo_texte" value="{{ info.promo_texte }}" placeholder="Texte de la promo" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+
+            <button type="submit" class="btn-secondary" style="background: #1976d2; margin-top: 15px; width: 100%;">Enregistrer les infos</button>
+        </form>
+    </div>
+        <!-- BLOC VIDEO -->
+    <div class="contact-form-box" style="margin-bottom: 30px; background: #fff8e1; border: 1px solid #ffe082;">
+        <h3 style="margin-bottom: 15px; color: #f57c00;">📺 Vidéo de présentation (Optionnel)</h3>
+        <form method="POST" action="/admin/video">
+            <label>Lien YouTube (format intégration)</label>
+            <input type="text" name="video_url" value="{{ info.video_url or '' }}" placeholder="Ex: https://www.youtube.com/embed/XXXXXX" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px;">
+            <button type="submit" class="btn-secondary" style="background: #f57c00; width: 100%;">Enregistrer la vidéo</button>
+        </form>
+    </div>
+    <!-- BLOC INFOS LIVRAISON -->
     <div class="contact-form-box" style="margin-bottom: 30px; background: #f0f8ff;">
         <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison et promo</h3>
         <form method="POST" action="/admin/infos">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div style="grid-column: 1 / -1;">
-                    <label style="color: #25D366; font-weight: bold;">Numero WhatsApp Business (avec 243)</label>
-                    <input type="text" name="whatsapp" value="{{ info.whatsapp }}" placeholder="Ex: 243992519112" required>
-                </div>
                 <div><label>Ville</label><input type="text" name="ville" value="{{ info.ville }}" required></div>
                 <div><label>Quartier / Zone</label><input type="text" name="quartier" value="{{ info.quartier }}" required></div>
                 <div><label>Frais de livraison</label><input type="text" name="frais" value="{{ info.frais }}" required></div>
                 <div><label>Delai</label><input type="text" name="delai" value="{{ info.delai }}" required></div>
-                <div style="grid-column: 1 / -1;">
-                    <label>Lien Video YouTube (Optionnel)</label>
-                    <input type="text" name="video_url" value="{{ info.video_url or '' }}" placeholder="Ex: https://www.youtube.com/embed/XXXXXX">
-                </div>
                 <div><label>Heure ouverture</label><input type="time" name="heure_debut" value="{{ info.heure_debut }}" required></div>
                 <div><label>Heure fermeture</label><input type="time" name="heure_fin" value="{{ info.heure_fin }}" required></div>
             </div>
             
             <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd;">
-                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Bandeau Promo (Texte)</label>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Bandeau Promo</label>
                 <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px;">
                     <input type="checkbox" name="promo_active" value="1" {% if info.promo_active %}checked{% endif %} style="width: 20px; height: 20px;">
                     <span>Afficher le bandeau promo sur l'accueil</span>
@@ -208,6 +223,7 @@
         }
     </script>
 {% endblock %}
+
 
 
 

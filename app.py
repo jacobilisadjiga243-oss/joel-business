@@ -341,6 +341,18 @@ def admin_supprimer(id):
     flash("Produit supprime.", "success")
     return redirect(url_for("admin_dashboard"))
 
+@app.route("/admin/video", methods=["POST"])
+@login_required
+def admin_video():
+    info = Parametre.query.first()
+    if not info:
+        info = Parametre()
+        db.session.add(info)
+    info.video_url = request.form.get("video_url")
+    db.session.commit()
+    flash("Lien video mis a jour !", "success")
+    return redirect(url_for("admin_dashboard"))
+
 @app.route("/admin/infos", methods=["POST"])
 @login_required
 def admin_infos():
@@ -370,6 +382,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
