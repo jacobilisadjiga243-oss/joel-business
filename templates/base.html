@@ -21,12 +21,6 @@
             <input type="text" name="q" placeholder="Rechercher..." value="{{ request.args.get('q', '') }}">
             <button type="submit"><i class="bi bi-search"></i></button>
         </form>
-
-        <div class="lang-switcher">
-            <a href="/changer-langue/fr" class="{% if current_lang == 'fr' %}active-lang{% endif %}">FR</a>
-            <a href="/changer-langue/en" class="{% if current_lang == 'en' %}active-lang{% endif %}">EN</a>
-            <a href="/changer-langue/ln" class="{% if current_lang == 'ln' %}active-lang{% endif %}">LN</a>
-        </div>
     </div>
 
     <nav class="main-nav">
