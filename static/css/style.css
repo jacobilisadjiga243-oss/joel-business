@@ -348,3 +348,10 @@ footer { text-align: center; padding: 30px; background: #111; color: #888; margi
     .main-nav { justify-content: center; gap: 10px; }
     .main-nav a { font-size: 0.8rem; }
 }
+
+/* Forcer les textes du menu en MAJUSCULES */
+.main-nav a {
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
