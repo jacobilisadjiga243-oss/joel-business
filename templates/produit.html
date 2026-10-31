@@ -1,30 +1,15 @@
 ﻿{% extends "base.html" %}
-{% block title %}{{ produit.nom }} - Joel Business{% endblock %}
-
+{% block title %}{{ produit.nom }}{% endblock %}
 {% block content %}
 <section class="produit-detail">
-    <div class="detail-img">
-        <img src="{{ image_url(produit.image) }}" alt="{{ produit.nom }}">
-    </div>
+    <div class="detail-img"><img src="{{ image_url(produit.image) }}" alt="{{ produit.nom }}"></div>
     <div class="detail-info">
         <h1>{{ produit.nom }}</h1>
         <p class="prix-grand">{{ produit.prix }} {{ produit.devise }}</p>
         <p>{{ produit.description }}</p>
         <p class="categorie-tag">Categorie : {{ produit.categorie }}</p>
-        
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-            <button class="btn-primary" onclick="ajouterAuPanier({{ produit.id }}, '{{ produit.nom }}', {{ produit.prix }}, '{{ produit.devise }}', '{{ image_url(produit.image) }}')">
-                Ajouter au panier
-            </button>
-            
-            <a href="https://wa.me/243992519112?text=Bonjour%20Joel%20Business%2C%20je%20suis%20interesse%20par%20le%20produit%20%3A%20{{ produit.nom }}%20({{ produit.prix }}%20{{ produit.devise }})." target="_blank" class="btn-whatsapp" style="text-decoration:none;">
-                Commander maintenant via WhatsApp
-            </a>
-
-            <a href="https://wa.me/?text=Regarde%20ce%20produit%20sur%20Joel%20Business%20%3A%20{{ produit.nom }}%20-%20https://joel-business.onrender.com/produit/{{ produit.id }}" target="_blank" class="btn-secondary" style="background: #1976d2; padding: 12px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 600;">
-                📱 Partager ce produit sur WhatsApp
-            </a>
-        </div>
+        <button class="btn-primary" onclick="ajouterAuPanier({{ produit.id }}, '{{ produit.nom }}', {{ produit.prix }}, '{{ produit.devise }}', '{{ image_url(produit.image) }}')">Ajouter au panier</button>
+        <a href="https://wa.me/243992519112?text=Bonjour%20Joel%20Business%2C%20je%20suis%20interesse%20par%20le%20produit%20%3A%20{{ produit.nom }}%20({{ produit.prix }}%20{{ produit.devise }})." target="_blank" class="btn-whatsapp" style="text-decoration:none; margin-top:10px;">Commander via WhatsApp</a>
     </div>
 </section>
 {% endblock %}

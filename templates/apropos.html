@@ -1,23 +1,11 @@
 ﻿{% extends "base.html" %}
-{% block title %}A propos - Joel Business{% endblock %}
+{% block title %}A propos{% endblock %}
 {% block content %}
 <section class="contact-section" style="max-width: 800px;">
-    <h1 style="text-align:center; margin-bottom: 20px; color: #e91e63;">Notre Histoire</h1>
-    <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-        <p style="font-size: 1.1rem; line-height: 1.8; color: #444;">
-            Bienvenue chez <strong>Joël Business</strong>, votre partenaire mode de confiance à Gbadolite et Mobayi-Mbongo.
-        </p>
-        <p style="font-size: 1.1rem; line-height: 1.8; color: #444; margin-top: 15px;">
-            Notre mission est simple : rendre la mode et les articles de qualité accessibles à tous, sans que vous ayez besoin de quitter votre maison. 
-            Des robes élégantes aux valises solides, en passant par les chaussures et les sacs, nous sélectionnons chaque article avec soin.
-        </p>
-        <p style="font-size: 1.1rem; line-height: 1.8; color: #444; margin-top: 15px;">
-            Commandez en toute simplicité via WhatsApp et faites-vous livrer rapidement à domicile. 
-            Merci de faire partie de l'aventure Joël Business !
-        </p>
-        <div style="text-align:center; margin-top: 30px;">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Joel Business" style="height: 100px;">
-        </div>
+    <h1 style="text-align:center; color: #e91e63;">Notre Histoire</h1>
+    <div style="background: white; padding: 30px; border-radius: 15px;">
+        <p>Bienvenue chez <strong>Joël Business</strong>, votre partenaire mode de confiance à Gbadolite et Mobayi-Mbongo.</p>
+        <p>Notre mission : rendre la mode accessible à tous.</p>
     </div>
 </section>
 {% endblock %}

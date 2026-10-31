@@ -1,33 +1,15 @@
 ﻿{% extends "base.html" %}
-{% block title %}Suivi de commande - Joel Business{% endblock %}
+{% block title %}Suivi{% endblock %}
 {% block content %}
 <section class="contact-section" style="max-width: 600px;">
-    <h1 style="text-align:center; margin-bottom: 20px; color: #e91e63;">Suivre ma commande</h1>
-    <p style="text-align:center; color: #666; margin-bottom: 20px;">Entrez votre numéro de téléphone et votre référence de commande.</p>
-    
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}<p style="color: red; font-weight: bold; text-align:center; margin-bottom: 15px;">{{ messages[0] }}</p>{% endif %}
-    {% endwith %}
-
+    <h1 style="text-align:center;">Suivre ma commande</h1>
     <div class="contact-form-box">
         <form method="POST">
-            <label>Numero de telephone</label>
-            <input type="text" name="telephone" required placeholder="Ex: 0992519112">
-            <label>Reference de commande</label>
-            <input type="text" name="reference" required placeholder="Ex: CMD-12345">
-            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Suivre</button>
+            <label>Telephone</label><input type="text" name="telephone" required>
+            <label>Reference</label><input type="text" name="reference" required>
+            <button type="submit" class="btn-primary">Suivre</button>
         </form>
     </div>
-
-    {% if commande %}
-    <div style="background: white; padding: 20px; border-radius: 15px; margin-top: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); text-align: center;">
-        <h3 style="color: #1976d2;">Commande : {{ commande.reference }}</h3>
-        <p style="font-size: 1.2rem; margin-top: 15px;">Statut : 
-            <strong style="color: {% if commande.statut == 'Livre' %}green{% elif commande.statut == 'Annule' %}red{% else %}orange{% endif %};">
-                {{ commande.statut }}
-            </strong>
-        </p>
-    </div>
-    {% endif %}
+    {% if commande %}<div style="background:white; padding:20px; margin-top:20px; text-align:center;"><h3>Statut : {{ commande.statut }}</h3></div>{% endif %}
 </section>
 {% endblock %}

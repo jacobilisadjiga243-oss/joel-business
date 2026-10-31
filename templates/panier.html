@@ -1,19 +1,11 @@
 ﻿{% extends "base.html" %}
-{% block title %}Mon Panier - Joel Business{% endblock %}
-
+{% block title %}Mon Panier{% endblock %}
 {% block content %}
 <section class="panier-section">
-    <h1>Mon Panier</h1>
+    <h1>🛒 Mon Panier</h1>
     <div id="panier-liste"></div>
     <div id="panier-total"></div>
-    <button class="btn-whatsapp" onclick="commanderWhatsApp()">
-        Commander via WhatsApp
-    </button>
+    <button class="btn-whatsapp" onclick="commanderWhatsApp()">Commander via WhatsApp</button>
 </section>
 {% endblock %}
-
-{% block scripts %}
-<script>
-    const WHATSAPP = "{{ whatsapp_number }}";
-</script>
-{% endblock %}
+{% block scripts %}<script>const WHATSAPP = "{{ whatsapp_number }}";</script>{% endblock %}

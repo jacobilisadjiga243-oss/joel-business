@@ -1,21 +1,12 @@
 ﻿{% extends "base.html" %}
-{% block title %}Connexion Admin - Joel Business{% endblock %}
-
+{% block title %}Connexion Admin{% endblock %}
 {% block content %}
 <section class="contact-section" style="max-width: 500px;">
     <h1>Espace Admin</h1>
-    <p class="contact-intro">Connectez-vous pour gerer vos produits.</p>
-    
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <p style="color: red; font-weight: bold; margin-bottom: 15px;">{{ messages[0] }}</p>
-      {% endif %}
-    {% endwith %}
-
     <div class="contact-form-box">
         <form method="POST" action="/admin">
             <label>Mot de passe</label>
-            <input type="password" name="password" required placeholder="Entrez le mot de passe">
+            <input type="password" name="password" required>
             <button type="submit" class="btn-whatsapp" style="background:#111;">Se connecter</button>
         </form>
     </div>

@@ -1,90 +1,29 @@
 ﻿{% extends "base.html" %}
-{% block title %}Contact & Livraison - Joel Business{% endblock %}
-
+{% block title %}Contact{% endblock %}
 {% block content %}
 <section class="contact-section">
     <h1>Nous Contacter</h1>
-    <p class="contact-intro">
-        Pour toute commande, question ou information sur la livraison,
-        remplissez le formulaire ci-dessous ou contactez-nous directement sur WhatsApp.
-    </p>
-
     <div class="contact-grid">
-        <!-- FORMULAIRE -->
         <div class="contact-form-box">
-            <h2>Nous envoyer un message</h2>
-<form method="POST" action="/contact">
-    <label>Nom complet</label>
-    <input type="text" name="nom" required>
-    <label>Email</label>
-    <input type="email" name="email" required>
-    <label>Message</label>
-    <textarea name="message" rows="3" required></textarea>
-    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Envoyer par Email</button>
-</form>
-<hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-<h2>Ou commander sur WhatsApp</h2>
+            <h2>Envoyer un message</h2>
             <form onsubmit="envoyerFormulaireContact(event)">
-                <label>Nom complet *</label>
-                <input type="text" id="nom" required placeholder="Votre nom">
-
-                <label>Telephone *</label>
-                <input type="tel" id="telephone" required placeholder="Ex: 0992519112">
-
-                <label>Adresse de livraison *</label>
-                <textarea id="adresse" required placeholder="Quartier, avenue, numero, reference..." rows="3"></textarea>
-
-                <label>Heure de livraison souhaitee</label>
-                <input type="time" id="heure" value="10:00">
-
-                <label>Produits souhaites (ou message)</label>
-                <textarea id="message" placeholder="Ex: Robe noire taille M, 2 chemises blanches..." rows="3"></textarea>
-
-                <button type="submit" class="btn-whatsapp">
-                    Envoyer via WhatsApp
-                </button>
+                <label>Nom</label><input type="text" id="nom" required>
+                <label>Telephone</label><input type="tel" id="telephone" required>
+                <label>Adresse</label><textarea id="adresse" required></textarea>
+                <label>Heure</label><input type="time" id="heure" value="10:00">
+                <label>Message</label><textarea id="message"></textarea>
+                <button type="submit" class="btn-whatsapp">Envoyer via WhatsApp</button>
             </form>
         </div>
-
-        <!-- INFOS LIVRAISON -->
         <div class="contact-info-box">
-            <h2>Informations de livraison</h2>
-
-            <div class="info-item">
-                <span class="info-label">Ville</span>
-                <span class="info-value">{{ info.ville }}</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Zone</span>
-                <span class="info-value">{{ info.quartier }}</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Delai</span>
-                <span class="info-value">{{ info.delai }}</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Frais</span>
-                <span class="info-value">{{ info.frais }}</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Horaires</span>
-                <span class="info-value">{{ info.heure_debut }} - {{ info.heure_fin }}</span>
-            </div>
-
-            <div class="whatsapp-box">
-                <p>Ou contactez-nous directement :</p>
-                <a href="https://wa.me/{{ whatsapp_number }}" target="_blank" class="btn-whatsapp-small">
-                    WhatsApp : {{ whatsapp_number }}
-                </a>
-            </div>
+            <h2>Infos Livraison</h2>
+            <p><strong>Ville :</strong> {{ info.ville }}</p>
+            <p><strong>Zone :</strong> {{ info.quartier }}</p>
+            <p><strong>Frais :</strong> {{ info.frais }}</p>
+            <p><strong>Delai :</strong> {{ info.delai }}</p>
+            <p><strong>Horaires :</strong> {{ info.heure_debut }} - {{ info.heure_fin }}</p>
         </div>
     </div>
 </section>
 {% endblock %}
-
-{% block scripts %}
-<script>
-    const WHATSAPP_NUMBER = "{{ whatsapp_number }}";
-</script>
-{% endblock %}
-
+{% block scripts %}<script>const WHATSAPP_NUMBER = "{{ whatsapp_number }}";</script>{% endblock %}
