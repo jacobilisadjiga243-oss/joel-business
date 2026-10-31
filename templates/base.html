@@ -6,7 +6,6 @@
     <title>{% block title %}Joel Business{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Icônes Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body>
@@ -19,7 +18,7 @@
     
     <div class="nav-actions">
         <form action="/produits" method="GET" class="search-form">
-            <input type="text" name="q" placeholder="{{ t.rechercher }}" value="{{ request.args.get('q', '') }}">
+            <input type="text" name="q" placeholder="Rechercher..." value="{{ request.args.get('q', '') }}">
             <button type="submit"><i class="bi bi-search"></i></button>
         </form>
 
@@ -31,19 +30,24 @@
     </div>
 
     <nav class="main-nav">
-        <a href="/"><i class="bi bi-house-door"></i> {{ t.accueil }}</a>
-        <a href="/produits"><i class="bi bi-grid"></i> {{ t.tout_voir }}</a>
-        <a href="/produits?categorie=femme"><i class="bi bi-person-standing-dress"></i> {{ t.femme }}</a>
-        <a href="/produits?categorie=homme"><i class="bi bi-person-standing"></i> {{ t.homme }}</a>
-        <a href="/produits?categorie=valise"><i class="bi bi-briefcase"></i> {{ t.valises }}</a>
-        <a href="/promotions" style="color: #ffcc00;"><i class="bi bi-fire"></i> Promos</a>
-        <a href="/contact"><i class="bi bi-envelope"></i> {{ t.contact }}</a>
-        <a href="/panier" class="cart-btn"><i class="bi bi-cart3"></i> {{ t.panier }} (<span id="cart-count">0</span>)</a>
+        <a href="/"><i class="bi bi-house-door"></i> ACCUEIL</a>
+        <a href="/produits"><i class="bi bi-grid"></i> TOUT VOIR</a>
+        <a href="/produits?categorie=femme">FEMME</a>
+        <a href="/produits?categorie=homme">HOMME</a>
+        <a href="/produits?categorie=valise">VALISES</a>
+        <a href="/nouveautes">NOUVEAUTES</a>
+        <a href="/promotions" style="color: #ffcc00;"><i class="bi bi-fire"></i> PROMOS</a>
+        <a href="/guide-tailles">TAILLES</a>
+        <a href="/faq">FAQ</a>
+        <a href="/apropos">A PROPOS</a>
+        <a href="/suivi">SUIVI</a>
+        <a href="/contact"><i class="bi bi-envelope"></i> CONTACT</a>
+        <a href="/panier" class="cart-btn"><i class="bi bi-cart3"></i> PANIER ( <span id="cart-count">0</span> )</a>
     </nav>
 </header>
 
 <div class="bandeau-defilant">
-    <div class="defilant-texte">🚚 {{ t.livraison }} 🚚</div>
+    <div class="defilant-texte">🚚 Livraison dans toute la zone du Nord-Ubangi | Commandez via WhatsApp 🚚</div>
 </div>
 
 <main>
