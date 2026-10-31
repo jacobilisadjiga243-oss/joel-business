@@ -14,32 +14,7 @@
       {% if messages %}<p style="color: green; font-weight: bold; margin-bottom: 15px; background: #e8f5e9; padding: 10px; border-radius: 8px;">{{ messages[0] }}</p>{% endif %}
     {% endwith %}
 
-    <!-- BLOC 1 : COULEUR DE FOND (Optionnel) -->
-    <div class="contact-form-box" style="margin-bottom: 30px; background: #fce4ec;">
-        <h3 style="margin-bottom: 15px; color: #c2185b;">🎨 Apparence du site</h3>
-        <form method="POST" action="/admin/changer-couleur">
-            <label>Choisir la couleur de fond de l'accueil</label>
-            <select name="couleur_fond" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px;">
-                <option value="linear-gradient(135deg, #111, #e91e63)" {% if info.couleur_fond == "linear-gradient(135deg, #111, #e91e63)" %}selected{% endif %}>Rouge Bordeaux</option>
-                <option value="linear-gradient(135deg, #000428, #004e92)" {% if info.couleur_fond == "linear-gradient(135deg, #000428, #004e92)" %}selected{% endif %}>Bleu Nuit</option>
-                <option value="linear-gradient(135deg, #134e5e, #71b280)" {% if info.couleur_fond == "linear-gradient(135deg, #134e5e, #71b280)" %}selected{% endif %}>Vert Nature</option>
-            </select>
-            <button type="submit" class="btn-secondary" style="background: #c2185b; width: 100%;">Appliquer cette couleur</button>
-        </form>
-    </div>
-
-    <!-- BLOC 2 : INFOS LIVRAISON -->
-    <div class="contact-form-box" style="margin-bottom: 30px; background: #f0f8ff;">
-        <h3 style="margin-bottom: 15px; color: #1976d2;">⚙️ Modifier les infos de livraison</h3>
-        <form method="POST" action="/admin/infos">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div><label>Ville</label><input type="text" name="ville" value="{{ info.ville }}" required></div>
-                <div><label>Quartier / Zone</label><input type="text" name="quartier" value="{{ info.quartier }}" required></div>
-                <div><label>Frais de livraison</label><input type="text" name="frais" value="{{ info.frais }}" required></div>
-                <div><label>Delai</label><input type="text" name="delai" value="{{ info.delai }}" required></div>
-                <div><label>Heure ouverture</label><input type="time" name="heure_debut" value="{{ info.heure_debut }}" required></div>
-                <div><label>Heure fermeture</label><input type="time" name="heure_fin" value="{{ info.heure_fin }}" required></div>
-            </div>
+    
             <button type="submit" class="btn-secondary" style="background: #1976d2; margin-top: 15px; width: 100%;">Enregistrer les infos de livraison</button>
         </form>
     </div>
@@ -165,3 +140,4 @@
     </div>
 </section>
 {% endblock %}
+
